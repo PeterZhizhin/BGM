@@ -34,6 +34,7 @@ public class Note extends Button {
                 try {
                     sound = Sound.getSoundUsingJAVE(soundPath);
                 } catch (FileNotFoundException e) {
+                    System.err.println("File "+soundPath+" not found!");
                     e.printStackTrace();
                 }
                 System.out.println(soundPath+" loaded!");
