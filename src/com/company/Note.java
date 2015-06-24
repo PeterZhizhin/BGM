@@ -1,7 +1,7 @@
 package com.company;
 
+import com.company.Math.Matrix4f;
 import com.company.OpenGL.Generators.TextureGenerator;
-import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL13.*;
 
@@ -17,7 +17,7 @@ public class Note {
     }
 
     public Note(int x, int y, int width, int height) {
-        model = new Matrix4f().scale(width,height,1).translate(x,y,0);
+        model = new Matrix4f().multiply(Matrix4f.scale(width, height, 1)).multiply(Matrix4f.translate(x, y, 0));
     }
 
     public static void initDraw() {

@@ -2,7 +2,6 @@ package com.company.OpenGL.Shaders;
 
 import com.company.OpenGL.Generators.ShaderGenerator;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL20.*;
