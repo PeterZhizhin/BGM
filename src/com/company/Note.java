@@ -35,6 +35,15 @@ public class Note extends Button {
                 Shader.getCurrentShader().modelMatrixUniformId,model
         );
         Square.draw();
+    }
+
+    public void draw(float x, float y) {
+        checkForGLError();
+        Shader.getCurrentShader().setUniformMat4f(
+                Shader.getCurrentShader().modelMatrixUniformId, Matrix4f.translate(x, y, 0)
+        );
+        Square.draw();
+
 
         long ctm=System.currentTimeMillis();
 
@@ -42,25 +51,22 @@ public class Note extends Button {
         double endAngle;
         boolean drawSector=false;
 
-        if (selectionStartTime-ctm>selectionTimeInMS) {
-            endAngle=Math.PI*2;
-        } else {
-            endAngle=Math.PI*2*(selectionStartTime-ctm)/selectionTimeInMS;
-        }
-
         if (getIsHOver()) {
             startAngle=0;
+            if (selectionStartTime-ctm>selectionTimeInMS) {
+                endAngle=Math.PI*2;
+            } else {
+                endAngle=Math.PI*2*(selectionStartTime-ctm)/selectionTimeInMS;
+            }
             drawSector=true;
         } else {
-            if (selectionStopTime-ctm<selectionTimeInMS) {
-                startAngle=Math.PI*2*(selectionStopTime-ctm)/selectionTimeInMS;
-                drawSector=true;
-            }
+
+
+
+
         }
 
-        if (drawSector) {
-            //TODO: draw segment using startAngle and endAngle
-        }
+
     }
 
     private static final long selectionTimeInMS = 1000;

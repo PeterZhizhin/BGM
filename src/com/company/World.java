@@ -12,7 +12,19 @@ public class World {
     private static Matrix4f ortho;
 
     private static Note[][] notes;
-    private static Note mouse;
+    private static Note currentPlayingNote = null;
+    private static void playNote(Note play) {
+        if (currentPlayingNote==null) {
+            currentPlayingNote = play;
+            currentPlayingNote.play();
+        }
+    }
+    private static void stopPlaying() {
+        if (currentPlayingNote!=null) {
+            currentPlayingNote.stopPlaying();
+            currentPlayingNote = null;
+        }
+    }
     private static int height;
     private static int width;
 
@@ -29,7 +41,13 @@ public class World {
             for (int j=0; j<4; j++) {
                 final int iF=i;
                 final int jF=j;
-                notes[i][j] = new Note(() -> System.out.println("Pressed "+iF+" : "+jF),x, y);
+                try {
+                    notes[i][j] = new Note(Sound.AUDIO_PATH + String.valueOf(i+1) + String.valueOf(j+1) + ".mp3",
+                            () -> playNote(notes[iF][jF]),x,y);
+                    //Loaded
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 x+=1f;
             }
             y+=1f;
@@ -41,8 +59,6 @@ public class World {
             e.printStackTrace();
         }*/
 
-    }
-
     public static void update(int deltaTime) {
         boolean mousePressedRightNow=Input.isWasMousePressed();
         if (mousePressedRightNow) {
@@ -53,6 +69,9 @@ public class World {
                 notes[i][j].update(deltaTime);
             }
         }
+        //TODO: If SPACE PRESSED -> stopPlaying
+        if(Input.isKeyDown())
+            stopPlaying();
 
     }
 
@@ -71,6 +90,9 @@ public class World {
     }
 
     public static void destroy() {
+        for (Note[] n1 : notes)
+            for (Note n : n1)
+                n.destroy();
 
     }
 

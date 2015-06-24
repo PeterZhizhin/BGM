@@ -3,6 +3,7 @@ package com.company.Audio;
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.openal.AL11.AL_SEC_OFFSET;
 import static org.lwjgl.openal.AL11.alGetBufferi;
+import static org.lwjgl.openal.Util.checkALError;
 
 import it.sauronsoftware.jave.*;
 import org.lwjgl.LWJGLUtil;
@@ -80,8 +81,7 @@ public class Sound {
 
         //Если класс должен содержать звуковые данные - он будет их содержать.
         //If class should contain data we will contain it.
-        if (contain)
-            waveData = soundData;
+        waveData = soundData;
 
         this.soundBuffer = soundBuffer;
 
@@ -246,16 +246,21 @@ public class Sound {
         return alGetSourcef(soundSource, AL11.AL_SAMPLE_OFFSET);
     }
 
+    public static final String AUDIO_PATH = "resources/audio/";
+
+    public static int num = 0;
+
     public static Sound getSoundUsingJAVE(String path) throws FileNotFoundException {
         File source = new File(path);
-        String targetName = "tempWave.s16le";
+        String targetName = String.valueOf(num)+"tempWave.wav";
+        ++num;
         File target = new File(targetName);
         AudioAttributes audio = new AudioAttributes();
         audio.setSamplingRate(44100);
         audio.setChannels(2);
 
         EncodingAttributes attributes = new EncodingAttributes();
-        attributes.setFormat("s16le");
+        attributes.setFormat("wav");
         attributes.setAudioAttributes(audio);
 
         Encoder encoder = new Encoder();
@@ -272,51 +277,22 @@ public class Sound {
         return returnSound;
 
     }
-    public static byte[] readBytes(String name) {
-        ByteArrayOutputStream ous;
-        InputStream ios = null;
-        try {
-            ios = new FileInputStream(name);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
 
-        byte[] buffer = new byte[4096];
-        ous = new ByteArrayOutputStream();
-        int read;
-        try {
-            while ((read = ios.read(buffer)) != -1) {
-                ous.write(buffer, 0, read);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                ios.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                ous.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return ous.toByteArray();
-    }
-
-    private static final int samplerate = 44100;
-    private static final int format = AL_FORMAT_STEREO16;
-
-    public static Sound getSound(String targetName) {
-        byte[] bytes = readBytes(targetName);
-        ByteBuffer data = ByteBuffer.allocateDirect(bytes.length).order(ByteOrder.nativeOrder());
-        data.put(bytes);
+    public static Sound getSound(String targetName) throws FileNotFoundException {
+        Sound res = null;
+        WaveData wavefile =  WaveData.create(new BufferedInputStream(new FileInputStream(targetName)));
         int buffer = alGenBuffers();
-        alBufferData(buffer, format, data, samplerate);
+        checkALError();
+        try {
+        alBufferData(buffer, wavefile.format, wavefile.data, wavefile.samplerate);
         int source = alGenSources();
         alSourcei(source, AL_BUFFER, buffer);
-            return new Sound(source, samplerate, format, buffer, data);
+        res = new Sound(source, wavefile.samplerate, wavefile.format, buffer, wavefile.data);
+        }
+        finally {
+            wavefile.dispose();
+        }
+        return res;
     }
 
 }
