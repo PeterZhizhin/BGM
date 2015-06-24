@@ -9,6 +9,7 @@ public class World {
     private static Matrix4f ortho;
 
     private static Note[][] notes;
+    private static Note mouse;
     private static int height;
     private static int width;
 
@@ -22,14 +23,26 @@ public class World {
         for (int i = 0; i < 4; i++) {
             x=0.5f;
             for (int j=0; j<4; j++) {
-                notes[i][j] = new Note(x,y);
+                final int iF=i;
+                final int jF=j;
+                notes[i][j] = new Note(() -> System.out.println("Pressed "+iF+" : "+jF),x, y);
                 x+=1f;
             }
             y+=1f;
         }
+
     }
 
     public static void update(int deltaTime) {
+        boolean mousePressedRightNow=Input.isWasMousePressed();
+        if (mousePressedRightNow) {
+            System.out.println("PRESSED: "+Input.getMouseX()+" :: "+Input.getMouseY());
+        }
+        for (int i=0; i<4; i++) {
+            for (int j=0; j<4; j++) {
+                notes[i][j].update(deltaTime);
+            }
+        }
 
     }
 
@@ -41,6 +54,7 @@ public class World {
         for(Note[] n1 : notes)
             for(Note note : n1)
                 note.draw();
+
         Note.disableDraw();
         Shader.defaultShader.disable();
 

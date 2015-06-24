@@ -8,12 +8,10 @@ import it.sauronsoftware.jave.*;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.openal.AL11;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class Sound {
     private int soundSource;
@@ -253,14 +251,14 @@ public class Sound {
 
     public static Sound getSoundUsingJAVE(String path, boolean contain) throws FileNotFoundException {
         File source = new File(path);
-        String targetName = "tempWave.wav";
+        String targetName = "tempWave.s16le";
         File target = new File(targetName);
         AudioAttributes audio = new AudioAttributes();
         audio.setSamplingRate(44100);
         audio.setChannels(2);
 
         EncodingAttributes attributes = new EncodingAttributes();
-        attributes.setFormat("wav");
+        attributes.setFormat("s16le");
         attributes.setAudioAttributes(audio);
 
         Encoder encoder = new Encoder();
@@ -270,30 +268,57 @@ public class Sound {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        Sound returnSound = getSound(new BufferedInputStream(new FileInputStream(target)), contain);
+        Sound returnSound = getSound(targetName, contain);
 
         target.delete();
 
         return returnSound;
 
     }
+    public static byte[] readBytes(String name) {
+        ByteArrayOutputStream ous;
+        InputStream ios = FileReader.class.getResourceAsStream(name);
 
-    public static Sound getSound(BufferedInputStream fileInputStream, boolean contain) {
-        WaveData waveData = WaveData.create(fileInputStream);
-        ByteBuffer data = null;
-        int sampleRate = waveData.samplerate;
-        int format = waveData.format;
+        byte[] buffer = new byte[4096];
+        ous = new ByteArrayOutputStream();
+        int read;
+        try {
+            while ((read = ios.read(buffer)) != -1) {
+                ous.write(buffer, 0, read);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                ios.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                ous.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        byte[] b=ous.toByteArray();
+        return b;
+    }
+
+    private static final int samplerate = 44100;
+    private static final int format = AL_FORMAT_STEREO16;
+
+    public static Sound getSound(String targetName, boolean contain) {
+        byte[] bytes = readBytes(targetName);
+        ByteBuffer data = ByteBuffer.allocateDirect(bytes.length).order(ByteOrder.nativeOrder());
+        data.put(bytes);
         int buffer = alGenBuffers();
-        alBufferData(buffer, format, waveData.data, sampleRate);
-        if (contain)
-            data = waveData.data;
-        waveData.dispose();
+        alBufferData(buffer, format, data, samplerate);
         int source = alGenSources();
         alSourcei(source, AL_BUFFER, buffer);
         if (contain)
-            return new Sound(source, sampleRate, format, buffer, contain, data);
+            return new Sound(source, samplerate, format, buffer, contain, data);
         else
-            return new Sound(source, sampleRate, format, buffer, contain, null);
+            return new Sound(source, samplerate, format, buffer, contain, null);
     }
 
 }
