@@ -29,28 +29,29 @@ public class World {
     private static int width;
 
     public static void init(int widthA,int heightA) {
-        width = widthA; height = heightA;
-        glViewport(0,0,width,height);
-        float leftPlaceInLeft = 5-6.0f*width/height;
-        ortho = Matrix4f.orthographic(leftPlaceInLeft,5,-1,5,-1,1);
+        width = widthA;
+        height = heightA;
+        glViewport(0, 0, width, height);
+        float leftPlaceInLeft = 5 - 6.0f * width / height;
+        ortho = Matrix4f.orthographic(leftPlaceInLeft, 5, -1, 5, -1, 1);
         notes = new Note[4][4];
         Note.loadTexture();
-        float x,y=0.5f;
+        float x, y = 0.5f;
         for (int i = 0; i < 4; i++) {
-            x=0.5f;
-            for (int j=0; j<4; j++) {
-                final int iF=i;
-                final int jF=j;
+            x = 0.5f;
+            for (int j = 0; j < 4; j++) {
+                final int iF = i;
+                final int jF = j;
                 try {
-                    notes[i][j] = new Note(Sound.AUDIO_PATH + String.valueOf(i+1) + String.valueOf(j+1) + ".mp3",
-                            () -> playNote(notes[iF][jF]),x,y);
+                    notes[i][j] = new Note(Sound.AUDIO_PATH + String.valueOf(i + 1) + String.valueOf(j + 1) + ".mp3",
+                            () -> playNote(notes[iF][jF]), x, y);
                     //Loaded
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-                x+=1f;
+                x += 1f;
             }
-            y+=1f;
+            y += 1f;
         }
 
         /*try {
@@ -58,6 +59,7 @@ public class World {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }*/
+    }
 
     public static void update(int deltaTime) {
         boolean mousePressedRightNow=Input.isWasMousePressed();
@@ -70,8 +72,8 @@ public class World {
             }
         }
         //TODO: If SPACE PRESSED -> stopPlaying
-        if(Input.isKeyDown())
-            stopPlaying();
+        /*if(Input.isKeyDown())
+            stopPlaying();*/
 
     }
 

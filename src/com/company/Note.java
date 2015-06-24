@@ -137,6 +137,7 @@ public class Note extends Button {
     }
 
     public void destroy() {
-        sound.dispose();
+        if (sound!=null)
+            sound.dispose();
     }
 }
