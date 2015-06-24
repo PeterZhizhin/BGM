@@ -35,11 +35,11 @@ public class World {
             y+=1f;
         }
 
-        try {
+        /*try {
             Sound music = Sound.getSoundUsingJAVE("resources/audio/music.mp3");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 
