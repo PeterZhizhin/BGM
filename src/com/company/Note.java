@@ -25,12 +25,13 @@ public class Note {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, noteTexture);
         World.getTextureShader().setTexture(0);
+        Square.bind();
     }
 
     public void draw(Matrix4f ortho) {
         FloatBuffer matrix = FloatBuffer.allocate(16);
         ortho.mul(model).get(matrix);
         World.getTextureShader().setMatrix(matrix);
-
+        Square.draw();
     }
 }
