@@ -3,10 +3,6 @@ package com.company;
 import com.company.Audio.OpenALContextHandler;
 import org.lwjgl.Sys;
 import org.lwjgl.glfw.*;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.ALC;
-import org.lwjgl.openal.ALContext;
-import org.lwjgl.openal.ALDevice;
 import org.lwjgl.opengl.*;
 
 import static org.lwjgl.glfw.Callbacks.*;

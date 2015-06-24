@@ -1,5 +1,6 @@
 package com.company;
 
+import com.company.Audio.Sound;
 import com.company.GUI.Button;
 import com.company.Graphics.Shader;
 import com.company.Graphics.Texture;
@@ -7,23 +8,51 @@ import com.company.Math.Matrix4f;
 import org.lwjgl.Sys;
 import sun.security.provider.SHA;
 
+import java.io.FileNotFoundException;
+
 import static com.company.Utils.Utils.checkForGLError;
 
 public class Note extends Button {
     private Matrix4f model;
     private static Texture noteTexture;
 
+    private Thread loadSound;
+    private boolean isLoading;
+    private void loadedCallback() {
+        sound.playSound();
+        isLoading = false;
+        loadSound = null;
+    }
+    private Sound sound;
     public static void loadTexture() {
         noteTexture = new Texture("note.png");
     }
 
-    public Note(Runnable listener, float x, float y) {
+    public Note(String soundPath, Runnable listener, float x, float y) throws FileNotFoundException {
         super(x,y,1,1);
+        loadSound = new Thread(() -> {
+                try {
+                    sound = Sound.getSoundUsingJAVE(soundPath);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(soundPath+" loaded!");
+            loadedCallback();
+
+        });
         model = Matrix4f.translate(x,y,0);
         //model = Matrix4f.scale(width,height,1).multiply(Matrix4f.translate(x, y, 0));
         setListener(listener);
         checkForGLError();
     }
+
+    public void play() {
+        loadSound.run();
+        System.out.println("Start loading sound");
+    }
+
+
+    public void stopPlaying() {sound.stopSound();}
 
     public static void initDraw() {
         noteTexture.bind();
@@ -105,5 +134,9 @@ public class Note extends Button {
 
     public static void disableDraw() {
         noteTexture.unbind();
+    }
+
+    public void destroy() {
+        sound.dispose();
     }
 }
