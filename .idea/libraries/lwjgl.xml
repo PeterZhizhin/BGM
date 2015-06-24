@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="lwjgl">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../OneNightShootan/lib/lwjgl.jar!/" />
+      <root url="jar://$USER_HOME$/Projects/Libraries/lwjgl/jar/lwjgl.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

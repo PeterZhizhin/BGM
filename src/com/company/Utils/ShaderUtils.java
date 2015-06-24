@@ -1,16 +1,39 @@
 package com.company.Utils;
 
-import com.company.OpenGL.Generators.TextResourceReader;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class ShaderUtils {
+    public static String readTextFile(String fileName) {
+        StringBuilder body = new StringBuilder();
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
+
+            String nextLine;
+            while ((nextLine = bufferedReader.readLine()) != null) {
+                body.append(nextLine.replaceAll("[/]+.*",""));
+                body.append("\n");
+            }
+            bufferedReader.close();
+        } catch (FileNotFoundException e) {
+            System.err.println("File "+fileName+" not found ");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.print("File "+fileName+" could not be readed");
+        }
+
+        return body.toString();
+    }
 
     public static int loadShader(String vertPath, String fragPath){
 
-        String vert = TextResourceReader.readTextFile(vertPath);
-        String frag = TextResourceReader.readTextFile(fragPath);
+        String vert = readTextFile(vertPath);
+        String frag = readTextFile(fragPath);
 
         int program = glCreateProgram();
         int vertID = glCreateShader(GL_VERTEX_SHADER);

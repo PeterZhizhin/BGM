@@ -1,50 +1,20 @@
-package com.company.Shaders;
+package com.company.Graphics;
 
+import com.company.Math.Matrix4f;
 import com.company.Utils.ShaderUtils;
+import static com.company.Utils.Utils.checkForGLError;
+import static org.lwjgl.opengl.GL20.*;
 
 public class Shader {
 
     public static final int VERTEX_ATTRIB = 0;
-    public static final int TEXTURE_COORDS_ATTRIB = 1;
+    public static final int UV_COORDS = 1;
 
     private int ID;
 
     public static final Shader defaultShader =
-            new Shader("content/static.vert", "content/static.frag")
-                    .bindFirstTexture()
-            ;
-
-    public static final Shader rollShadows =
-            new Shader("content/lightmap/rollShadows.vert", "content/lightmap/rollShadows.frag")
-                    .bindFirstTexture()
-            ;
-
-    public static final Shader angleShadows =
-            new Shader("content/lightmap/angleShadows.vert", "content/lightmap/angleShadows.frag")
-                    .bindFirstTexture()
-            ;
-
-    public static final Shader unrollShadows =
-            new Shader("content/lightmap/unrollShadows.vert", "content/lightmap/unrollShadows.frag")
-                    .bindFirstTexture()
-            ;
-
-    public static final Shader vblur =
-            new Shader("content/blur/vblur.vert", "content/blur/blur.frag")
-                    .bindFirstTexture()
-            ;
-
-
-    public static final Shader hblur =
-            new Shader("content/blur/hblur.vert", "content/blur/blur.frag")
-                    .bindFirstTexture()
-            ;
-
-    public static final Shader multiplyColors =
-            new Shader("content/multiplyColors.vert", "content/multiplyColors.frag")
-                    .bindFirstTexture()
-                    .bindSecondTexture()
-            ;
+            new Shader("resources/shaders/static.vert", "resources/shaders/static.frag")
+                    .bindFirstTexture();
 
     private static Shader currentShader=null;
 

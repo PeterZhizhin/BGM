@@ -48,6 +48,7 @@ public class Main {
         // Configure our window
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); // the window will be resizable
+        glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
@@ -64,12 +65,6 @@ public class Main {
             windowWidth = DESIRED_WIDTH;
             windowHeight = DESIRED_HEIGHT;
             window = glfwCreateWindow(DESIRED_WIDTH, DESIRED_HEIGHT, "Hello World!", NULL, NULL);
-        }
-        if (windowHeight<windowWidth) {
-            width = height = windowHeight;
-        }
-        else {
-            width = height = windowWidth;
         }
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
@@ -102,7 +97,7 @@ public class Main {
         GLContext.createFromCurrent();
 
         // Set the clear color
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         initializeWorld();
 
         long previousUpdateTime = System.currentTimeMillis();
@@ -129,13 +124,12 @@ public class Main {
     }
 
     private static final boolean IS_FULLSCREEN = false;
-    private static final int DESIRED_WIDTH = 800;
-    private static final int DESIRED_HEIGHT = 800;
-    private static int windowWidth,windowHeight,width, height;
+    private static final int DESIRED_WIDTH = 1024;
+    private static final int DESIRED_HEIGHT = 768;
+    private static int windowWidth,windowHeight;
 
     private static void initializeWorld() {
-        glViewport(windowWidth/2-width/2,windowHeight/2+height/2,width,height);
-        World.init(width,height);
+        World.init(windowWidth,windowHeight);
     }
 
     private static void update(int deltaTime) {
