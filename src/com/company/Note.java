@@ -1,12 +1,15 @@
 package com.company;
 
-import com.company.Math.Matrix4f;
 import com.company.OpenGL.Generators.TextureGenerator;
+import com.company.Utils.Buffers;
+import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL13.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 public class Note {
@@ -17,7 +20,7 @@ public class Note {
     }
 
     public Note(int x, int y, int width, int height) {
-        model = new Matrix4f().multiply(Matrix4f.scale(width, height, 1)).multiply(Matrix4f.translate(x, y, 0));
+        model = new Matrix4f().scale(width,height,1).translate(x,y,0);
     }
 
     public static void initDraw() {
@@ -29,7 +32,7 @@ public class Note {
     }
 
     public void draw(Matrix4f ortho) {
-        FloatBuffer matrix = FloatBuffer.allocate(16);
+        FloatBuffer matrix = ByteBuffer.allocateDirect(16 * Buffers.FLOAT_BYTE_SIZE).order(ByteOrder.nativeOrder()).asFloatBuffer();
         ortho.mul(model).get(matrix);
         World.getTextureShader().setMatrix(matrix);
         Square.draw();

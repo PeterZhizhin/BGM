@@ -128,7 +128,7 @@ public class Main {
 
     }
 
-    private static final boolean IS_FULLSCREEN = true;
+    private static final boolean IS_FULLSCREEN = false;
     private static final int DESIRED_WIDTH = 800;
     private static final int DESIRED_HEIGHT = 800;
     private static int windowWidth,windowHeight,width, height;
