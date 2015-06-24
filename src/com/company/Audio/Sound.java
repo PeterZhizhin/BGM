@@ -5,6 +5,7 @@ import static org.lwjgl.openal.AL11.AL_SEC_OFFSET;
 import static org.lwjgl.openal.AL11.alGetBufferi;
 
 import it.sauronsoftware.jave.*;
+import org.lwjgl.LWJGLUtil;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.openal.AL11;
 
@@ -44,10 +45,9 @@ public class Sound {
      * @param sampleRate Сэплрейт (кол-во сэмплов в секунду). Samplerate (number of samples in one second)
      * @param format Звуковой формат в OpenAL. Sound format like it OpenAL.
      * @param soundBuffer Звуковой буфер, созданый OpenAL. Sound buffer which was created by OpenAL.
-     * @param contain Должен ли класс содержать информацию для обработки звуковых данных. Should class contain info about sound data for calculations?
      * @param soundData Звуковые данные. Будет передан null если contain==false. Sound data. It will be null if contain==false
      */
-    private Sound(int soundSource, int sampleRate, int format, int soundBuffer, boolean contain, ByteBuffer soundData)
+    private Sound(int soundSource, int sampleRate, int format, int soundBuffer, ByteBuffer soundData)
     {
         this.soundSource = soundSource;
         this.sampleRate = sampleRate;
@@ -84,7 +84,6 @@ public class Sound {
             waveData = soundData;
 
         this.soundBuffer = soundBuffer;
-        this.contain = contain;
 
         //Вычисление продолжительности в секундах
         //Get duration in seconds
@@ -104,8 +103,7 @@ public class Sound {
         bits = alGetBufferi(soundBuffer, AL_BITS);
         int lengthInSamples = sizeInBytes * 8 / (channels * bits);
         frequency = AL10.alGetBufferi(soundBuffer, AL_FREQUENCY);
-        float durationInSeconds = (float)lengthInSamples / (float)frequency;
-        return durationInSeconds;
+        return  (float)lengthInSamples / (float)frequency;
     }
 
     /**
@@ -148,20 +146,19 @@ public class Sound {
         else
             arrayToReturn = new int[2][samplesCount];
 
-        int currentSample = from;
         try
         {
             if (isMono)
             {
                 if (is8Bit)
                 {
-                    waveData.position(currentSample);
+                    waveData.position(from);
                     for (int i = 0; i<samplesCount; i++)
                         arrayToReturn[0][i] = waveData.get();
                 }
                 else
                 {
-                    waveData.position(currentSample*2);
+                    waveData.position(from*2);
                     for (int i = 0; i<samplesCount; i++)
                         arrayToReturn[0][i] = waveData.getShort();
                 }
@@ -170,7 +167,7 @@ public class Sound {
             {
                 if (is8Bit)
                 {
-                    waveData.position(currentSample * 2);
+                    waveData.position(from * 2);
                     for (int i = 0; i<samplesCount; i++)
                     {
                         arrayToReturn[0][i] = waveData.get();
@@ -179,7 +176,7 @@ public class Sound {
                 }
                 else
                 {
-                    waveData.position(currentSample * 4);
+                    waveData.position(from * 4);
                     for (int i = 0; i<samplesCount; i++)
                     {
                         //System.out.println(i);
@@ -249,7 +246,7 @@ public class Sound {
         return alGetSourcef(soundSource, AL11.AL_SAMPLE_OFFSET);
     }
 
-    public static Sound getSoundUsingJAVE(String path, boolean contain) throws FileNotFoundException {
+    public static Sound getSoundUsingJAVE(String path) throws FileNotFoundException {
         File source = new File(path);
         String targetName = "tempWave.s16le";
         File target = new File(targetName);
@@ -268,7 +265,7 @@ public class Sound {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        Sound returnSound = getSound(targetName, contain);
+        Sound returnSound = getSound(targetName);
 
         target.delete();
 
@@ -277,7 +274,12 @@ public class Sound {
     }
     public static byte[] readBytes(String name) {
         ByteArrayOutputStream ous;
-        InputStream ios = FileReader.class.getResourceAsStream(name);
+        InputStream ios = null;
+        try {
+            ios = new FileInputStream(name);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         byte[] buffer = new byte[4096];
         ous = new ByteArrayOutputStream();
@@ -300,14 +302,13 @@ public class Sound {
                 e.printStackTrace();
             }
         }
-        byte[] b=ous.toByteArray();
-        return b;
+        return ous.toByteArray();
     }
 
     private static final int samplerate = 44100;
     private static final int format = AL_FORMAT_STEREO16;
 
-    public static Sound getSound(String targetName, boolean contain) {
+    public static Sound getSound(String targetName) {
         byte[] bytes = readBytes(targetName);
         ByteBuffer data = ByteBuffer.allocateDirect(bytes.length).order(ByteOrder.nativeOrder());
         data.put(bytes);
@@ -315,10 +316,7 @@ public class Sound {
         alBufferData(buffer, format, data, samplerate);
         int source = alGenSources();
         alSourcei(source, AL_BUFFER, buffer);
-        if (contain)
-            return new Sound(source, samplerate, format, buffer, contain, data);
-        else
-            return new Sound(source, samplerate, format, buffer, contain, null);
+            return new Sound(source, samplerate, format, buffer, data);
     }
 
 }

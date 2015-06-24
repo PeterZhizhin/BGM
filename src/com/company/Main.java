@@ -2,6 +2,8 @@ package com.company;
 
 import org.lwjgl.Sys;
 import org.lwjgl.glfw.*;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC;
 import org.lwjgl.opengl.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -45,6 +47,7 @@ public class Main {
         if ( glfwInit() != GL11.GL_TRUE )
             throw new IllegalStateException("Unable to initialize GLFW");
 
+
         // Configure our window
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); // the window will be resizable
@@ -82,9 +85,6 @@ public class Main {
         glfwMakeContextCurrent(window);
         // Enable v-sync
         glfwSwapInterval(1);
-
-        // Make the window visible
-        glfwShowWindow(window);
 
     }
 

@@ -13,11 +13,14 @@ public class Note extends Button {
     private Matrix4f model;
     private static Texture noteTexture;
 
+    public static void loadTexture() {
+        noteTexture = new Texture("note.png");
+    }
+
     public Note(Runnable listener, float x, float y) {
         super(x,y,1,1);
         model = Matrix4f.translate(x,y,0);
         //model = Matrix4f.scale(width,height,1).multiply(Matrix4f.translate(x, y, 0));
-        noteTexture = new Texture("note.png");
         setListener(listener);
         checkForGLError();
     }

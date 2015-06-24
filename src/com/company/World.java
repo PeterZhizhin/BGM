@@ -1,7 +1,10 @@
 package com.company;
 
+import com.company.Audio.Sound;
 import com.company.Math.Matrix4f;
 import com.company.Graphics.Shader;
+
+import java.io.FileNotFoundException;
 
 import static org.lwjgl.opengl.GL11.glViewport;
 
@@ -19,6 +22,7 @@ public class World {
         float leftPlaceInLeft = 5-6.0f*width/height;
         ortho = Matrix4f.orthographic(leftPlaceInLeft,5,-1,5,-1,1);
         notes = new Note[4][4];
+        Note.loadTexture();
         float x,y=0.5f;
         for (int i = 0; i < 4; i++) {
             x=0.5f;
@@ -29,6 +33,12 @@ public class World {
                 x+=1f;
             }
             y+=1f;
+        }
+
+        try {
+            Sound music = Sound.getSoundUsingJAVE("resources/audio/music.mp3");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
 
     }
