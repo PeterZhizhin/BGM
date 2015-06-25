@@ -59,12 +59,24 @@ public class Note extends Button {
         return (float) (96*Math.log(frequency/27.5)/Math.log(2));
     }
 
+    private static int[] toFlatArray(int[][] input) {
+        int dimensions=input.length;
+        int[] out=new int[input[0].length];
+        for (int i=0; i<out.length; i++) {
+            out[i]=0;
+            for (int j=0; j<dimensions; j++) {
+                out[i]+=input[j][i];
+            }
+        }
+        return out;
+    }
+
     public float[] getFFT() {
         int[][] samples=sound.getNextSamples(1024);
         if (samples==null) {
             return null;
         }
-        float[] fft=FFT.fft(samples[0]);
+        float[] fft=FFT.fft(toFlatArray(samples));
 
         float[] data=new float[424];
         for (int i=0; i<data.length; i++)
@@ -93,7 +105,7 @@ public class Note extends Button {
         }
 
         for (int i=0; i<data.length; i++) {
-            data[i]*=0.001f;
+            data[i]*=0.002f;
         }
 
         float max=0;
