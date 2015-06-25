@@ -13,8 +13,17 @@ public class Shader {
     private int ID;
 
     public static final Shader defaultShader =
-            new Shader("resources/shaders/static.vert", "resources/shaders/static.frag")
+            new Shader("resources/shaders/static.vert",
+                    "resources/shaders/static.frag")
                     .bindFirstTexture();
+
+    public static final Shader coloredShader =
+            new Shader("resources/shaders/colored.vert",
+                    "resources/shaders/colored.frag");
+
+    public static final Shader unrollShadows =
+            new Shader("resources/shaders/unrollShadows.vert",
+                    "resources/shaders/unrollShadows.frag");
 
     private static Shader currentShader=null;
 

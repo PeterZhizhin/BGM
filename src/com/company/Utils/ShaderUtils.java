@@ -9,25 +9,48 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class ShaderUtils {
-    public static String readTextFile(String fileName) {
-        StringBuilder body = new StringBuilder();
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
 
-            String nextLine;
-            while ((nextLine = bufferedReader.readLine()) != null) {
-                body.append(nextLine.replaceAll("[/]+.*",""));
-                body.append("\n");
-            }
-            bufferedReader.close();
-        } catch (FileNotFoundException e) {
-            System.err.println("File "+fileName+" not found ");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.err.print("File "+fileName+" could not be readed");
+    private static String toLengthedString(String source, int limit, char filler) {
+        StringBuilder s=new StringBuilder();
+        s.append(source);
+        while (s.length()<limit) {
+            s.append(filler);
         }
+        return s.toString();
+    }
 
-        return body.toString();
+    private static String numerizeLines(String s) {
+        String[] lines=s.split("\n");
+        int lengthInDec=String.valueOf(lines.length+1).length();
+        lengthInDec=Math.max(6, lengthInDec);
+        StringBuilder sb=new StringBuilder();
+        sb.append('\n');
+        sb.append(toLengthedString("LINES", lengthInDec, '-'))
+                .append("|-CODE--------------------------\n");
+        for (int i=0; i<lines.length; i++) {
+            sb.append(toLengthedString(String.valueOf(i+1), lengthInDec, ' '))
+                    .append("| ")
+                    .append(lines[i])
+                    .append('\n');
+        }
+        return sb.toString();
+    }
+
+    public static String readTextFile(String fileName) {
+        StringBuilder result = new StringBuilder();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            String buffer;
+            while ((buffer = reader.readLine()) != null) {
+                result.append(buffer);
+                result.append("\n");
+            }
+            reader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result.toString();
     }
 
     public static int loadShader(String vertPath, String fragPath){
@@ -44,14 +67,14 @@ public class ShaderUtils {
         glCompileShader(vertID);
         if(glGetShaderi(vertID, GL_COMPILE_STATUS) == GL_FALSE) {
             new Exception("Failed to compile vertex shader "+vertPath+":\n"+
-                    glGetShaderInfoLog(vertID)).printStackTrace();
+                    glGetShaderInfoLog(vertID)+numerizeLines(vert)).printStackTrace();
             System.exit(1);
         }
 
         glCompileShader(fragID);
         if(glGetShaderi(fragID, GL_COMPILE_STATUS) == GL_FALSE) {
             new Exception("Failed to compile fragment shader "+fragPath+":\n"+
-                    glGetShaderInfoLog(fragID)).printStackTrace();
+                    glGetShaderInfoLog(fragID)+numerizeLines(frag)).printStackTrace();
             System.exit(1);
         }
 

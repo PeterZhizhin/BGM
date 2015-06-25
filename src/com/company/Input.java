@@ -56,7 +56,7 @@ public class Input extends GLFWKeyCallback {
     public static void updateInput(long window, float w, float h) {
         glfwGetCursorPos(window,mouseXBuffer,mouseYBuffer);
         mouseX = mouseXBuffer.get(0)*6/h+5-6*w/h;
-        mouseY = mouseYBuffer.get(0)*6/h-1;
+        mouseY = 4-(mouseYBuffer.get(0)*6/h-1);//documented feature of glfw - inverted Y axis of mouse
 
         isMousePressed=1==glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_1);
         wasMousePressed = prevMouseState & !isMousePressed;

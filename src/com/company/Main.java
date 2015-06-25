@@ -8,6 +8,7 @@ import org.lwjgl.opengl.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL14.glBlendEquation;
 import static org.lwjgl.system.MemoryUtil.*;
 
 import java.nio.ByteBuffer;
@@ -87,9 +88,15 @@ public class Main {
         // Enable v-sync
         glfwSwapInterval(1);
 
+        GLContext currentContext = GLContext.createFromCurrent();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendEquation(GL14.GL_FUNC_ADD);
+
     }
 
     private static void loop() {
+
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
         // LWJGL detects the context that is current in the current thread,
@@ -97,8 +104,6 @@ public class Main {
         // bindings available for use.
         GLContext.createFromCurrent();
 
-        // Set the clear color
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         initializeWorld();
 
         long previousUpdateTime = System.currentTimeMillis();
@@ -106,6 +111,7 @@ public class Main {
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while ( glfwWindowShouldClose(window) == GL_FALSE ) {
+
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             Input.updateInput(window, windowWidth, windowHeight);

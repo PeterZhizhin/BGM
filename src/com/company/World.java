@@ -1,18 +1,27 @@
 package com.company;
 
 import com.company.Audio.Sound;
+import com.company.GUI.FontRenderer;
+import com.company.Graphics.AbstractTexture;
+import com.company.Graphics.Camera;
 import com.company.Math.Matrix4f;
 import com.company.Graphics.Shader;
 
 import java.io.FileNotFoundException;
+import java.util.Random;
 
-import static org.lwjgl.opengl.GL11.glViewport;
+import static com.company.Utils.Utils.checkForGLError;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 
 public class World {
     private static Matrix4f ortho;
 
     private static Note[][] notes;
     private static Note currentPlayingNote = null;
+
+    private static FontRenderer fr=new FontRenderer(0.4f, 0.25f);
+
     private static void playNote(Note play) {
         if (currentPlayingNote==null) {
             currentPlayingNote = play;
@@ -27,15 +36,16 @@ public class World {
     }
     private static int height;
     private static int width;
+    private static float leftPlaceInLeft;
 
     public static void init(int widthA,int heightA) {
         width = widthA;
         height = heightA;
         glViewport(0, 0, width, height);
-        float leftPlaceInLeft = 5 - 6.0f * width / height;
-        ortho = Matrix4f.orthographic(leftPlaceInLeft, 5, -1, 5, -1, 1);
+        leftPlaceInLeft = 5 - 6.0f * width / height;
+        Camera.setProjectionMatrix(Matrix4f.orthographic(leftPlaceInLeft, 5, -1, 5, -1, 1));
+        Camera.setViewMatrix(Matrix4f.IDENTITY);
         notes = new Note[4][4];
-        Note.loadTexture();
         float x, y = 0.5f;
         for (int i = 0; i < 4; i++) {
             x = 0.5f;
@@ -77,17 +87,82 @@ public class World {
 
     }
 
+    private static final int barsSize=1000;
+    private static final int blurAmount=1;
+    private static BarsRenderer br=new BarsRenderer(barsSize);
+
+    private static final Random rnd=new Random();
+    private static final float[] arr=new float[barsSize];
+
+    /**
+     * Returns the index by given index
+     * @param index given index
+     * @param limit the limitation of index
+     * @return index
+     */
+    private static int getIndexByIndex(int index, int limit) {
+        while (index<0)
+            index+=limit;
+        index%=limit;
+        return index;
+    }
+
+    private static Benchmark bench=new Benchmark("World.draw", true);
+
     public static void draw() {
+
+        bench.tick();
+
+        glClearColor(243/256f, 0f, 53/256f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         Shader.defaultShader.enable();
-        Shader.getCurrentShader().setUniformMat4f(Shader.getCurrentShader().viewMatrixUniformId,Matrix4f.IDENTITY);
-        Shader.getCurrentShader().setUniformMat4f(Shader.getCurrentShader().projectionMatrixUniformId, ortho);
-        Note.initDraw();
+
+
+        Camera.useCamera();
+
         for(Note[] n1 : notes)
             for(Note note : n1)
                 note.draw();
 
-        Note.disableDraw();
         Shader.defaultShader.disable();
+
+
+        for (int i=0; i<barsSize; i++)
+            arr[i]=arr[i]*0.8f+0.2f*rnd.nextFloat();
+
+        for (int i=0; i<blurAmount; i++) {
+
+            float[] blur=new float[barsSize];
+            for (int j=0; j<barsSize; j++) {
+                blur[j]=
+                        arr[getIndexByIndex(j-1, barsSize)]*0.25f+
+                        arr[getIndexByIndex(j, barsSize)]*0.5f+
+                        arr[getIndexByIndex(j+1, barsSize)]*0.25f;
+            }
+            System.arraycopy(blur, 0, arr, 0, barsSize);
+        }
+
+        AbstractTexture t=br.renderBars(arr);
+        checkForGLError();
+
+        Shader.defaultShader.enable();
+            Camera.useCamera();
+
+            t.bind();
+            Shader.defaultShader.setUniformMat4f(Shader.defaultShader.modelMatrixUniformId,
+                    Matrix4f.translate(2.5f, 2.5f, 0.8f));
+            BigSquare.draw();
+            t.unbind();
+
+
+            fr.render("РОЦК ", leftPlaceInLeft, 3.2f);
+            fr.render("КИНЦО", leftPlaceInLeft, 2.2f);
+            fr.render("АУТИЗМ", leftPlaceInLeft, 1.2f);
+            fr.render("SP33DC0RE", leftPlaceInLeft, 0.2f);
+        Shader.defaultShader.disable();
+
+        bench.tack();
 
     }
 

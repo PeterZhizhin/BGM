@@ -6,15 +6,19 @@ import com.company.Graphics.Shader;
 import com.company.Graphics.Texture;
 import com.company.Math.Matrix4f;
 import org.lwjgl.Sys;
-import sun.security.provider.SHA;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 import static com.company.Utils.Utils.checkForGLError;
 
 public class Note extends Button {
-    private Matrix4f model;
-    private static Texture noteTexture;
+
+    private Matrix4f model;//matrix contains floatbuffer, not float[]
+    private Matrix4f position;//not-cleanable matrix for multiplying
+
+    private static final Texture noteTexture= new Texture("note.png");
+    private static final Texture tickTexture= new Texture("angle.png");
 
     private Thread loadSound;
     private boolean isLoading;
@@ -24,9 +28,6 @@ public class Note extends Button {
         loadSound = null;
     }
     private Sound sound;
-    public static void loadTexture() {
-        noteTexture = new Texture("note.png");
-    }
 
     public Note(String soundPath, Runnable listener, float x, float y) throws FileNotFoundException {
         super(x,y,1,1);
@@ -42,6 +43,7 @@ public class Note extends Button {
 
         });
         model = Matrix4f.translate(x,y,0);
+        position=model.clone();
         //model = Matrix4f.scale(width,height,1).multiply(Matrix4f.translate(x, y, 0));
         setListener(listener);
         checkForGLError();
@@ -55,66 +57,87 @@ public class Note extends Button {
 
     public void stopPlaying() {sound.stopSound();}
 
-    public static void initDraw() {
-        noteTexture.bind();
+    private static float function(double sourceValue) {
+        return (float) (2*Math.PI*(Math.sin(sourceValue/2-Math.PI/2)/2+0.5));
     }
 
     public void draw() {
         checkForGLError();
+
+        double[] angles= getSegmentAngles();
+        if (angles!=null) {
+
+            int from= (int) (function(angles[0])*segmentsNumber/2/Math.PI);
+            int to= (int) (function(angles[1])*segmentsNumber/2/Math.PI);
+
+            tickTexture.bind();
+
+            for (int i=from; i<to; i++) {
+
+                Shader.getCurrentShader().setUniformMat4f(
+                        Shader.getCurrentShader().modelMatrixUniformId,
+                        position.multiply(Matrix4f.getRotated((float) (i * 2 * Math.PI / segmentsNumber)))
+                );
+                Square.draw();
+
+            }
+            tickTexture.unbind();
+        }
+
+        noteTexture.bind();
         Shader.getCurrentShader().setUniformMat4f(
                 Shader.getCurrentShader().modelMatrixUniformId,model
         );
         Square.draw();
+        noteTexture.unbind();
+
+
     }
 
-    public void draw(float x, float y) {
-        checkForGLError();
-        Shader.getCurrentShader().setUniformMat4f(
-                Shader.getCurrentShader().modelMatrixUniformId, Matrix4f.translate(x, y, 0)
-        );
-        Square.draw();
-
-
+    public double[] getSegmentAngles() {
         long ctm=System.currentTimeMillis();
 
-        double startAngle;
-        double endAngle;
+        double startAngle=0;
+        double endAngle=0;
         boolean drawSector=false;
+
+        if (ctm-selectionStartTime>selectionTimeInMS) {
+            endAngle=Math.PI*2;
+        } else {
+            endAngle=Math.PI*2*(ctm-selectionStartTime)/selectionTimeInMS;
+        }
 
         if (getIsHOver()) {
             startAngle=0;
-            if (selectionStartTime-ctm>selectionTimeInMS) {
-                endAngle=Math.PI*2;
-            } else {
-                endAngle=Math.PI*2*(selectionStartTime-ctm)/selectionTimeInMS;
-            }
             drawSector=true;
         } else {
-
-
-
-
+            if (ctm-selectionStopTime<selectionTimeInMS) {
+                startAngle=Math.PI*2*(ctm-selectionStopTime)/selectionTimeInMS;
+                drawSector=true;
+            }
         }
 
-
+        if (drawSector) {
+            return new double[]{startAngle, endAngle};
+        }
+        return null;
     }
 
-    private static final long selectionTimeInMS = 1000;
 
-    private static long selectionStartTime=0;
-    private static long selectionStopTime=0;
+    private static final long segmentsNumber = 50;
+    private static final long selectionTimeInMS = 800;
+
+    private long selectionStartTime=0;
+    private long selectionStopTime=0;
 
     private boolean wasHoverInLastUpdate=false;
 
     private void startSelection() {
-        System.out.println("START SELECTION");
         selectionStartTime=System.currentTimeMillis();
 
     }
 
     private void discardSelection() {
-
-        System.out.println("DISCARD SELECTION");
         selectionStopTime=System.currentTimeMillis();
     }
 
@@ -131,10 +154,6 @@ public class Note extends Button {
         wasHoverInLastUpdate=isHover;
 
 
-    }
-
-    public static void disableDraw() {
-        noteTexture.unbind();
     }
 
     public void destroy() {
