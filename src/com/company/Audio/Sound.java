@@ -137,8 +137,9 @@ public class Sound {
     {
         //Получаем данные только если они у нас есть.
         //Get data only if we have it.
-        if (!contain)
-            return null;
+        //if (!contain)
+        //    return null;
+        //TODO: solve it. You do not use 'contain' anywhere except here, so it is always 'false'
 
         int[][] arrayToReturn;
         if (isMono)

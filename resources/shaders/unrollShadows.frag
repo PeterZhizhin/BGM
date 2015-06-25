@@ -20,7 +20,7 @@ vec4 getShadow (float angle, float dist)
 		moAngle+=1.0;
 	}
 	vec4 texColor=texture(tex, vec2(moAngle, 0));
-	if (texColor.a>dist && dist>0.25) {
+	if (texColor.a>dist) {
 	    vec4 res=texColor;
 	    res.a=1.0;
 		return res;

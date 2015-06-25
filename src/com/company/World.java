@@ -6,6 +6,7 @@ import com.company.Graphics.AbstractTexture;
 import com.company.Graphics.Camera;
 import com.company.Math.Matrix4f;
 import com.company.Graphics.Shader;
+import org.lwjgl.Sys;
 
 import java.io.FileNotFoundException;
 import java.util.Random;
@@ -22,10 +23,12 @@ public class World {
 
     private static FontRenderer fr=new FontRenderer(0.4f, 0.25f);
 
+    private static long playingStartTime;
     private static void playNote(Note play) {
         if (currentPlayingNote==null) {
             currentPlayingNote = play;
             currentPlayingNote.play();
+            playingStartTime=System.currentTimeMillis();
         }
     }
     private static void stopPlaying() {
@@ -81,13 +84,37 @@ public class World {
                 notes[i][j].update(deltaTime);
             }
         }
+
+        if (currentPlayingNote!=null) {
+            float[] fft = currentPlayingNote.getFFT();
+            if (fft != null) {
+                for (int i = 0; i < barsSize; i++) {
+                    //arr[i] = Math.max(arr[i]-8.0f*deltaTime/1000, arr[i] * 0.9f + 0.1f * fft[i]);
+                    arr[i] = Math.max(arr[i]-3.0f*deltaTime/1000, arr[i] * 0.9f + 0.1f * fft[i]);
+                }
+
+                for (int i = 0; i < blurAmount; i++) {
+
+                    float[] blur = new float[barsSize];
+                    for (int j = 0; j < barsSize; j++) {
+                        blur[j] =
+                                arr[getIndexByIndex(j - 1, barsSize)] * 0.25f +
+                                        arr[getIndexByIndex(j, barsSize)] * 0.5f +
+                                        arr[getIndexByIndex(j + 1, barsSize)] * 0.25f;
+                    }
+                    System.arraycopy(blur, 0, arr, 0, barsSize);
+                }
+            }
+        }
+
+
         //TODO: If SPACE PRESSED -> stopPlaying
         /*if(Input.isKeyDown())
             stopPlaying();*/
 
     }
 
-    private static final int barsSize=1000;
+    private static final int barsSize=424;
     private static final int blurAmount=1;
     private static BarsRenderer br=new BarsRenderer(barsSize);
 
@@ -113,47 +140,46 @@ public class World {
 
         bench.tick();
 
-        glClearColor(243/256f, 0f, 53/256f, 1.0f);
+        glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         Shader.defaultShader.enable();
-
-
         Camera.useCamera();
 
         for(Note[] n1 : notes)
             for(Note note : n1)
+            if (note!=currentPlayingNote)
                 note.draw();
 
         Shader.defaultShader.disable();
 
 
-        for (int i=0; i<barsSize; i++)
-            arr[i]=arr[i]*0.8f+0.2f*rnd.nextFloat();
+        if (currentPlayingNote!=null) {
 
-        for (int i=0; i<blurAmount; i++) {
+            AbstractTexture t = br.renderBars(arr);
+            checkForGLError();
 
-            float[] blur=new float[barsSize];
-            for (int j=0; j<barsSize; j++) {
-                blur[j]=
-                        arr[getIndexByIndex(j-1, barsSize)]*0.25f+
-                        arr[getIndexByIndex(j, barsSize)]*0.5f+
-                        arr[getIndexByIndex(j+1, barsSize)]*0.25f;
-            }
-            System.arraycopy(blur, 0, arr, 0, barsSize);
+
+            Shader.defaultShader.enable();
+
+            Camera.useCamera();
+            t.bind();
+            Shader.defaultShader.setUniformMat4f(Shader.defaultShader.modelMatrixUniformId,
+                    Matrix4f.translate(currentPlayingNote.getX(), currentPlayingNote.getY(), 0.8f)
+            );
+            BigSquare.draw();
+            t.unbind();
+
+            float time= (float) (((System.currentTimeMillis()-playingStartTime)%1000)*2*Math.PI/1000f);
+            currentPlayingNote.draw(time);
+
+            Shader.defaultShader.disable();
+
         }
-
-        AbstractTexture t=br.renderBars(arr);
-        checkForGLError();
 
         Shader.defaultShader.enable();
             Camera.useCamera();
 
-            t.bind();
-            Shader.defaultShader.setUniformMat4f(Shader.defaultShader.modelMatrixUniformId,
-                    Matrix4f.translate(2.5f, 2.5f, 0.8f));
-            BigSquare.draw();
-            t.unbind();
 
 
             fr.render("РОЦК ", leftPlaceInLeft, 3.2f);

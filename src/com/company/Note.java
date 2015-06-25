@@ -55,8 +55,59 @@ public class Note extends Button {
         System.out.println("Start loading sound");
     }
 
+    private static float getNoteByFrequence(float frequency) {
+        return (float) (96*Math.log(frequency/27.5)/Math.log(2));
+    }
+
     public float[] getFFT() {
-        return FFT.fft(sound.getNextSamples(1024)[0]);
+        int[][] samples=sound.getNextSamples(1024);
+        if (samples==null) {
+            return null;
+        }
+        float[] fft=FFT.fft(samples[0]);
+
+        float[] data=new float[424];
+        for (int i=0; i<data.length; i++)
+            data[i]=0;
+        for (int i=0; i<512; i++) {
+            float note=getNoteByFrequence(i+27.5f);
+
+            int floor= (int) Math.floor(note);
+            float a= note-floor;
+            float b=1f-a;
+
+            if (floor<data.length) {
+                data[floor]+=fft[i]*a;
+            } else {
+                System.err.println("Used note "+floor);
+            }
+            if (floor+1<data.length) {
+                data[floor + 1] += fft[i] * b;
+            } else {
+                System.err.println("Used note "+floor);
+            }
+        }
+
+        for (int i=0; i<data.length; i++) {
+            data[i]*=(0.4f+i*0.6f/data.length);
+        }
+
+        for (int i=0; i<data.length; i++) {
+            data[i]*=0.001f;
+        }
+
+        float max=0;
+        for (int i=0; i<data.length; i++) {
+            max=Math.max(data[i], max);
+        }
+
+        if (max>2) {
+            for (int i=0; i<data.length; i++) {
+                data[i]*=2/max;
+            }
+        }
+
+        return data;
     }
 
 
@@ -66,9 +117,7 @@ public class Note extends Button {
         return (float) (2*Math.PI*(Math.sin(sourceValue/2-Math.PI/2)/2+0.5));
     }
 
-    public void draw() {
-        checkForGLError();
-
+    private void drawSelection() {
         double[] angles= getSegmentAngles();
         if (angles!=null) {
 
@@ -88,6 +137,10 @@ public class Note extends Button {
             }
             tickTexture.unbind();
         }
+    }
+
+    public void draw() {
+        checkForGLError();
 
         noteTexture.bind();
         Shader.getCurrentShader().setUniformMat4f(
@@ -95,6 +148,21 @@ public class Note extends Button {
         );
         Square.draw();
         noteTexture.unbind();
+
+        drawSelection();
+    }
+
+    public void draw(float angle) {
+        checkForGLError();
+
+        noteTexture.bind();
+        Shader.getCurrentShader().setUniformMat4f(
+                Shader.getCurrentShader().modelMatrixUniformId,position.multiply(Matrix4f.getRotated(angle))
+        );
+        Square.draw();
+        noteTexture.unbind();
+
+        drawSelection();
 
 
     }

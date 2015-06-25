@@ -42,7 +42,24 @@ public class BarsRenderer {
         return res;
     }
 
+    /**
+     * Returns the index by given index
+     * @param index given index
+     * @param limit the limitation of index
+     * @return index
+     */
+    private static int getIndexByIndex(int index, int limit) {
+        while (index<0)
+            index+=limit;
+        index%=limit;
+        return index;
+    }
+
+    private static int stepper=0;
     public AbstractTexture renderBars(float[] bars) {
+
+        stepper++;
+        stepper%=barsNumber;
 
         flatBars.bindForWriting();
 
@@ -59,7 +76,7 @@ public class BarsRenderer {
                             function(i*1f/barsNumber));
                     Shader.coloredShader.setUniform1f(coloredShaderLengthUniformId, bars[i]);
                     Shader.coloredShader.setUniformMat4f(Shader.coloredShader.modelMatrixUniformId,
-                            dists[i]);
+                            dists[getIndexByIndex(i+stepper, bars.length)]);
                     Square.draw();
                 }
             Shader.coloredShader.disable();

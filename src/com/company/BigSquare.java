@@ -3,8 +3,8 @@ package com.company;
 import com.company.Graphics.VertexArray;
 
 public class BigSquare {
-    public static float width = 4f;
-    public static float height = 4f;
+    public static float width = 8f;
+    public static float height = 8f;
 
     private static final float[] vertices = new float[]{
             -width/2, -height/2, 0.2f,

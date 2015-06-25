@@ -30,4 +30,12 @@ public class Button {
         if (Input.isWasMousePressed() && hover)
             listener.run();
     }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
 }
