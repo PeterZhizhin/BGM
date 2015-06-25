@@ -1,5 +1,6 @@
 package com.company;
 
+import com.company.Audio.FFT;
 import com.company.Audio.Sound;
 import com.company.GUI.Button;
 import com.company.Graphics.Shader;
@@ -52,6 +53,10 @@ public class Note extends Button {
     public void play() {
         loadSound.run();
         System.out.println("Start loading sound");
+    }
+
+    public float[] getFFT() {
+        return FFT.fft(sound.getNextSamples(1024)[0]);
     }
 
 
