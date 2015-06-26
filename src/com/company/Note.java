@@ -51,7 +51,7 @@ public class Note extends Button {
     }
 
     public void play() {
-        loadSound.run();
+        loadSound.start();
         System.out.println("Start loading sound");
     }
 
@@ -72,54 +72,57 @@ public class Note extends Button {
     }
 
     public float[] getFFT() {
-        int[][] samples=sound.getNextSamples(1024);
-        if (samples==null) {
-            return null;
-        }
-        float[] fft=FFT.fft(toFlatArray(samples));
-
-        float[] data=new float[424];
-        for (int i=0; i<data.length; i++)
-            data[i]=0;
-        for (int i=0; i<512; i++) {
-            float note=getNoteByFrequence(i+27.5f);
-
-            int floor= (int) Math.floor(note);
-            float a= note-floor;
-            float b=1f-a;
-
-            if (floor<data.length) {
-                data[floor]+=fft[i]*a;
-            } else {
-                System.err.println("Used note "+floor);
+        if (sound!=null) {
+            int[][] samples = sound.getNextSamples(1024);
+            if (samples == null) {
+                return null;
             }
-            if (floor+1<data.length) {
-                data[floor + 1] += fft[i] * b;
-            } else {
-                System.err.println("Used note "+floor);
+            float[] fft = FFT.fft(toFlatArray(samples));
+
+            float[] data = new float[424];
+            for (int i = 0; i < data.length; i++)
+                data[i] = 0;
+            for (int i = 0; i < 512; i++) {
+                float note = getNoteByFrequence(i + 27.5f);
+
+                int floor = (int) Math.floor(note);
+                float a = note - floor;
+                float b = 1f - a;
+
+                if (floor < data.length) {
+                    data[floor] += fft[i] * a;
+                } else {
+                    System.err.println("Used note " + floor);
+                }
+                if (floor + 1 < data.length) {
+                    data[floor + 1] += fft[i] * b;
+                } else {
+                    System.err.println("Used note " + floor);
+                }
             }
-        }
 
-        for (int i=0; i<data.length; i++) {
-            data[i]*=(0.4f+i*0.6f/data.length);
-        }
-
-        for (int i=0; i<data.length; i++) {
-            data[i]*=0.002f;
-        }
-
-        float max=0;
-        for (int i=0; i<data.length; i++) {
-            max=Math.max(data[i], max);
-        }
-
-        if (max>2) {
-            for (int i=0; i<data.length; i++) {
-                data[i]*=2/max;
+            for (int i = 0; i < data.length; i++) {
+                data[i] *= (0.4f + i * 0.6f / data.length);
             }
-        }
 
-        return data;
+            for (int i = 0; i < data.length; i++) {
+                data[i] *= 0.002f;
+            }
+
+            float max = 0;
+            for (int i = 0; i < data.length; i++) {
+                max = Math.max(data[i], max);
+            }
+
+            if (max > 2) {
+                for (int i = 0; i < data.length; i++) {
+                    data[i] *= 2 / max;
+                }
+            }
+
+            return data;
+        }
+        return null;
     }
 
 
