@@ -1,0 +1,119 @@
+<guessmelody>
+
+    <group>
+        <title>Аллах над нами</title>
+        <id>0</id>
+    </group>
+
+    <track>
+        <url>resources/audio/nasheeds/Nasheed - ISIS.mp3</url>
+        <groupid>0</groupid>
+        <price>10</price>
+    </track>
+
+    <track>
+        <url>resources/audio/nasheeds/MajorLeagueWobs - Isis-Step _ Allahu Trapbar.mp3</url>
+        <groupid>0</groupid>
+        <price>20</price>
+    </track>
+
+    <track>
+        <url>resources/audio/nasheeds/Nasheed - Abu Ali - Savarim - Badderless Trap.mp3</url>
+        <groupid>0</groupid>
+        <price>30</price>
+    </track>
+
+    <track>
+        <url>resources/audio/nasheeds/Nasheed - Abu 'Ali - Qom.mp3</url>
+        <groupid>0</groupid>
+        <price>40</price>
+    </track>
+
+    <group>
+        <title>Дуб Степь</title>
+        <id>1</id>
+    </group>
+
+    <track>
+        <url>resources/audio/dubstep/01 - Deviance (Dirtyphonics Remix)-192.mp3</url>
+        <groupid>1</groupid>
+        <price>10</price>
+    </track>
+
+    <track>
+        <url>resources/audio/dubstep/01 - Make It Bun Dem (Original)-192.mp3</url>
+        <groupid>1</groupid>
+        <price>20</price>
+    </track>
+
+    <track>
+        <url>resources/audio/dubstep/02 - Recess (Feat. Kill The Noise, Fatman Scoop &amp; Michael Angelakos)-192.mp3</url>
+        <groupid>1</groupid>
+        <price>30</price>
+    </track>
+
+    <track>
+        <url>resources/audio/dubstep/00 - 01 Knife Party - Fire Hive-192.mp3</url>
+        <groupid>1</groupid>
+        <price>40</price>
+    </track>
+
+    <group>
+        <title>Конь</title>
+        <id>2</id>
+    </group>
+
+    <track>
+        <url>resources/audio/horse/Выйду Ночью В Поле С Конем - Выйду ночью в поле с конем, Ночкой темной тихо пойд.mp3</url>
+        <groupid>2</groupid>
+        <price>10</price>
+    </track>
+
+    <track>
+        <url>resources/audio/horse/Выйду Ночью В Поле С Конем - Выйду ночью в поле с конем, Ночкой темной тихо пойд.mp3</url>
+        <groupid>2</groupid>
+        <price>20</price>
+    </track>
+
+    <track>
+        <url>resources/audio/horse/Выйду Ночью В Поле С Конем - Выйду ночью в поле с конем, Ночкой темной тихо пойд.mp3</url>
+        <groupid>2</groupid>
+        <price>30</price>
+    </track>
+
+    <track>
+        <url>resources/audio/horse/Выйду Ночью В Поле С Конем - Выйду ночью в поле с конем, Ночкой темной тихо пойд.mp3</url>
+        <groupid>2</groupid>
+        <price>40</price>
+    </track>
+
+    <group>
+        <title>Anime OST</title>
+        <id>3</id>
+    </group>
+
+    <track>
+        <url>resources/audio/anime/01-kinjirareta-asobi.mp3</url>
+        <groupid>3</groupid>
+        <price>10</price>
+    </track>
+
+    <track>
+        <url>resources/audio/anime/10 - What's up, people_!.mp3</url>
+        <groupid>3</groupid>
+        <price>20</price>
+    </track>
+
+    <track>
+        <url>resources/audio/anime/19 - 'Libera me' from hell.mp3</url>
+        <groupid>3</groupid>
+        <price>30</price>
+    </track>
+
+    <track>
+        <url>resources/audio/anime/Haibane Renmei - Blue Flow (Ending Single) - Blue Flow.mp3</url>
+        <groupid>3</groupid>
+        <price>40</price>
+    </track>
+
+</guessmelody>
