@@ -16,7 +16,7 @@ public class Main {
 
     // We need to strongly reference callback instances.
     private static GLFWErrorCallback errorCallback;
-    private static GLFWKeyCallback keyCallback;
+    private static Input keyCallback = new Input();
 
     // The window handle
     private static long window;
@@ -75,13 +75,7 @@ public class Main {
             throw new RuntimeException("Failed to create the GLFW window");
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
-            @Override
-            public void invoke(long window, int key, int scancode, int action, int mods) {
-                if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                    glfwSetWindowShouldClose(window, GL_TRUE); // We will detect this in our rendering loop
-            }
-        });
+        glfwSetKeyCallback(window, keyCallback);
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);

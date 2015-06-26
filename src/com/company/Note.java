@@ -3,6 +3,7 @@ package com.company;
 import com.company.Audio.FFT;
 import com.company.Audio.Sound;
 import com.company.GUI.Button;
+import com.company.Graphics.AbstractTexture;
 import com.company.Graphics.Shader;
 import com.company.Graphics.Texture;
 import com.company.Math.Matrix4f;
@@ -18,7 +19,7 @@ public class Note extends Button {
     private Matrix4f model;//matrix contains floatbuffer, not float[]
     private Matrix4f position;//not-cleanable matrix for multiplying
 
-    private static final Texture noteTexture= new Texture("note.png");
+    private RecordRenderer noteTexture;
     private static final Texture tickTexture= new Texture("angle.png");
 
     private Thread loadSound;
@@ -30,11 +31,12 @@ public class Note extends Button {
     }
     private Sound sound;
 
-    public Note(String soundPath, Runnable listener, float x, float y) throws FileNotFoundException {
+    public Note(String soundPath, int value, Runnable listener, float x, float y) {
         super(x,y,1,1);
         loadSound = new Thread(() -> {
                 try {
-                    sound = Sound.getSoundUsingJAVE(soundPath);
+                    String path = Sound.convert(soundPath);
+                    sound = Sound.getSound(path);
                 } catch (FileNotFoundException e) {
                     System.err.println("File "+soundPath+" not found!");
                     e.printStackTrace();
@@ -43,6 +45,7 @@ public class Note extends Button {
             loadedCallback();
 
         });
+        noteTexture = new RecordRenderer(value);
         model = Matrix4f.translate(x,y,0);
         position=model.clone();
         //model = Matrix4f.scale(width,height,1).multiply(Matrix4f.translate(x, y, 0));

@@ -5,6 +5,7 @@ import static org.lwjgl.openal.AL11.AL_SEC_OFFSET;
 import static org.lwjgl.openal.AL11.alGetBufferi;
 import static org.lwjgl.openal.Util.checkALError;
 
+import com.company.World;
 import it.sauronsoftware.jave.*;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.openal.AL10;
@@ -251,9 +252,9 @@ public class Sound {
 
     public static int num = 0;
 
-    public static Sound getSoundUsingJAVE(String path) throws FileNotFoundException {
+    public static String convert(String path) throws FileNotFoundException {
         File source = new File(path);
-        String targetName = String.valueOf(num)+"tempWave.wav";
+        String targetName = World.tempFolderPath+String.valueOf(num)+"tempWave.wav";
         ++num;
         File target = new File(targetName);
         AudioAttributes audio = new AudioAttributes();
@@ -270,13 +271,7 @@ public class Sound {
         } catch (EncoderException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-
-        Sound returnSound = getSound(targetName);
-
-        target.delete();
-
-        return returnSound;
-
+        return targetName;
     }
 
     public static Sound getSound(String targetName) throws FileNotFoundException {

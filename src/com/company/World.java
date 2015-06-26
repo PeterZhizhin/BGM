@@ -7,6 +7,7 @@ import com.company.Graphics.Camera;
 import com.company.Math.Matrix4f;
 import com.company.Graphics.Shader;
 import org.lwjgl.Sys;
+import static org.lwjgl.glfw.GLFW.*;
 
 import java.io.FileNotFoundException;
 import java.util.Random;
@@ -16,6 +17,8 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 
 public class World {
+    public static final String tempFolderPath = "temp/";
+
     private static Matrix4f ortho;
 
     private static Note[][] notes;
@@ -49,29 +52,24 @@ public class World {
         Camera.setProjectionMatrix(Matrix4f.orthographic(leftPlaceInLeft, 5, -1, 5, -1, 1));
         Camera.setViewMatrix(Matrix4f.IDENTITY);
         notes = new Note[4][4];
+        final int[][] values = new int[4][];
+        values[0] = new int[] {30, 50, 60, 30};
+        values[1] = new int[] {30, 70, 50, 60};
+        values[2] = new int[] {40, 50, 70, 40};
+        values[3] = new int[] {50, 60, 30, 50};
         float x, y = 0.5f;
         for (int i = 0; i < 4; i++) {
             x = 0.5f;
             for (int j = 0; j < 4; j++) {
                 final int iF = i;
                 final int jF = j;
-                try {
                     notes[i][j] = new Note(Sound.AUDIO_PATH + String.valueOf(i + 1) + String.valueOf(j + 1) + ".mp3",
-                            () -> playNote(notes[iF][jF]), x, y);
-                    //Loaded
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+                            values[i][j],
+                                () -> playNote(notes[iF][jF]), x, y);
                 x += 1f;
             }
             y += 1f;
         }
-
-        /*try {
-            Sound music = Sound.getSoundUsingJAVE("resources/audio/music.mp3");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }*/
     }
 
     public static void update(int deltaTime) {
@@ -108,9 +106,8 @@ public class World {
         }
 
 
-        //TODO: If SPACE PRESSED -> stopPlaying
-        /*if(Input.isKeyDown())
-            stopPlaying();*/
+        if(Input.isKeyDown(GLFW_KEY_SPACE))
+            stopPlaying();
 
     }
 
