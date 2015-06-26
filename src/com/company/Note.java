@@ -7,10 +7,8 @@ import com.company.Graphics.AbstractTexture;
 import com.company.Graphics.Shader;
 import com.company.Graphics.Texture;
 import com.company.Math.Matrix4f;
-import org.lwjgl.Sys;
 
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 
 import static com.company.Utils.Utils.checkForGLError;
 
@@ -19,33 +17,41 @@ public class Note extends Button {
     private Matrix4f model;//matrix contains floatbuffer, not float[]
     private Matrix4f position;//not-cleanable matrix for multiplying
 
-    private RecordRenderer noteTexture;
+    private AbstractTexture noteTexture;
     private static final Texture tickTexture= new Texture("angle.png");
+    private static final Texture notUsedTexture = new Texture("note.png");
+    private RecordTexture record;
 
     private Thread loadSound;
-    private boolean isLoading;
+    private boolean isPlaying=false;
+    private String convertedPath=null;
     private void loadedCallback() {
+        try {
+            sound = Sound.getSound(convertedPath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         sound.playSound();
-        isLoading = false;
         loadSound = null;
     }
-    private Sound sound;
+    private Sound sound=null;
 
     public Note(String soundPath, int value, Runnable listener, float x, float y) {
         super(x,y,1,1);
         loadSound = new Thread(() -> {
                 try {
-                    String path = Sound.convert(soundPath);
-                    sound = Sound.getSound(path);
+                    convertedPath = Sound.convert(soundPath);
                 } catch (FileNotFoundException e) {
                     System.err.println("File "+soundPath+" not found!");
                     e.printStackTrace();
                 }
                 System.out.println(soundPath+" loaded!");
-            loadedCallback();
+            if (!Thread.interrupted())
+                loadedCallback();
 
         });
-        noteTexture = new RecordRenderer(value);
+        record = new RecordTexture(value);
+        noteTexture = notUsedTexture;
         model = Matrix4f.translate(x,y,0);
         position=model.clone();
         //model = Matrix4f.scale(width,height,1).multiply(Matrix4f.translate(x, y, 0));
@@ -54,8 +60,13 @@ public class Note extends Button {
     }
 
     public void play() {
-        loadSound.start();
-        System.out.println("Start loading sound");
+        noteTexture = record;
+        if (sound==null && convertedPath==null)
+            loadSound.start();
+        if (sound==null && convertedPath!=null)
+            loadedCallback();
+        if (sound!=null)
+            sound.playSound();
     }
 
     private static float getNoteByFrequence(float frequency) {
@@ -129,7 +140,15 @@ public class Note extends Button {
     }
 
 
-    public void stopPlaying() {sound.stopSound();}
+    public void stopPlaying() {
+        if(loadSound!=null)
+            loadSound.interrupt();
+        else {
+            sound.stopSound();
+            sound.dispose();
+            sound = null;
+        }
+    }
 
     private static float function(double sourceValue) {
         return (float) (2*Math.PI*(Math.sin(sourceValue/2-Math.PI/2)/2+0.5));

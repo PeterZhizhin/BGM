@@ -103,6 +103,10 @@ public class World {
                     System.arraycopy(blur, 0, arr, 0, barsSize);
                 }
             }
+            else {
+                for (int j=0; j<arr.length; j++)
+                    arr[j]=0;
+            }
         }
 
 

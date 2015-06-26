@@ -113,13 +113,13 @@ public class Sound {
      */
     public void dispose()
     {
-        alDeleteBuffers(soundBuffer);
+        checkALError();
         alDeleteSources(soundSource);
+        alDeleteBuffers(soundBuffer);
+        checkALError();
     }
-    public boolean contain;
     public ByteBuffer waveData;
 
-    //
     public int[][] getNextSamples(int samplesCount)
     {
         return getNextSamples((int)getCurrentSampleCount(), samplesCount);
@@ -136,11 +136,6 @@ public class Sound {
      */
     public int[][] getNextSamples(int from, int samplesCount)
     {
-        //Получаем данные только если они у нас есть.
-        //Get data only if we have it.
-        //if (!contain)
-        //    return null;
-        //TODO: solve it. You do not use 'contain' anywhere except here, so it is always 'false'
 
         int[][] arrayToReturn;
         if (isMono)
@@ -221,30 +216,42 @@ public class Sound {
 
     public void setVolume(float volume)
     {
+        checkALError();
         alSourcef(soundSource, AL_VELOCITY, volume);
+        checkALError();
     }
     public void setPosition(float timePosition)
     {
+        checkALError();
         alSourcef(soundSource, AL_SEC_OFFSET, timePosition);
+        checkALError();
     }
     public float getPlayingTime()
     {
+        checkALError();
         return alGetSourcef(soundSource, AL_SEC_OFFSET);
     }
     public void playSound()
     {
+        checkALError();
         alSourcePlay(soundSource);
+        checkALError();
     }
     public void pauseSound()
     {
+        checkALError();
         alSourcePause(soundSource);
+        checkALError();
     }
     public void stopSound()
     {
+        checkALError();
         alSourceStop(soundSource);
+        checkALError();
     }
     public float getCurrentSampleCount()
     {
+        checkALError();
         return alGetSourcef(soundSource, AL11.AL_SAMPLE_OFFSET);
     }
 
@@ -275,6 +282,7 @@ public class Sound {
     }
 
     public static Sound getSound(String targetName) throws FileNotFoundException {
+        checkALError();
         Sound res = null;
         WaveData wavefile =  WaveData.create(new BufferedInputStream(new FileInputStream(targetName)));
         int buffer = alGenBuffers();
