@@ -192,19 +192,16 @@ public class Note extends Button {
         drawSelection();
     }
 
-    public void draw(float angle) {
-        checkForGLError();
-
-        noteTexture.bind();
-        Shader.getCurrentShader().setUniformMat4f(
-                Shader.getCurrentShader().modelMatrixUniformId,position.multiply(Matrix4f.getRotated(angle))
-        );
-        Square.draw();
-        noteTexture.unbind();
-
-        drawSelection();
-
-
+    private float angle=0;
+    public void changeAngle(float angle) {
+        this.angle+=angle;
+        if (this.angle<0) {
+            this.angle+=Math.PI*2;
+        }
+        if (this.angle>Math.PI*2) {
+            this.angle-=Math.PI*2;
+        }
+        model=position.multiply(Matrix4f.getRotated(this.angle));
     }
 
     public double[] getSegmentAngles() {
