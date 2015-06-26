@@ -25,5 +25,6 @@ void main()
 	vec4 color1 = texture(tex, uvCoord);
 	vec4 color2 = texture(tex2, uvCoord);
 	color.rgb = sum(color1.rgb,color2.rgb);
-	color.a = 1;
+	color.a = color1.a+color2.a;
+	color.a/=2;
 }
