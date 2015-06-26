@@ -61,8 +61,8 @@ public class Background extends FBOTexture {
         texture.bind();
         blured.bindToSecond();
 
-        //Shader.additiveBlend.setUniform4f(Shader.additiveBlend.getUniform("colorTex1"), 0, 0, 1, 1);
-        //Shader.additiveBlend.setUniform4f(Shader.additiveBlend.getUniform("colorTex2"),0,0,1,1);
+        Shader.additiveBlend.setUniform4f(Shader.additiveBlend.getUniform("colorTex1"), 0, 0, 1, 1);
+        Shader.additiveBlend.setUniform4f(Shader.additiveBlend.getUniform("colorTex2"),0,0,1,1);
 
         Square.draw();
 
