@@ -88,6 +88,19 @@ public class Note extends Button {
         return out;
     }
 
+    public float getCurrentVolume() {
+        if (sound!=null) {
+            int[][] samples = sound.getNextSamples(1024);
+            if (samples==null)
+                return -1;
+            float sum = 0;
+            for (float sample : samples[0])
+                sum+=Math.abs(sample);
+            sum/=samples[0].length;
+        }
+        return -1;
+    }
+
     public float[] getFFT() {
         if (sound!=null) {
             int[][] samples = sound.getNextSamples(1024);
