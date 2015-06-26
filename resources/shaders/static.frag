@@ -9,7 +9,5 @@ uniform sampler2D tex;
 void main()
 {
 	color = texture(tex, uvCoord);
-	color.r*=color.a;
-	color.g*=color.a;
-	color.b*=color.a;
+	color.rgb*=color.a;
 }

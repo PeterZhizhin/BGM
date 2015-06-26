@@ -12,6 +12,11 @@ public class Shader {
 
     private int ID;
 
+    public static final Shader additiveBlend =
+            new Shader("resources/shaders/static.vert",
+                    "resources/shaders/additiveBlend.frag")
+                    .bindFirstTexture().bindSecondTexture();
+
     public static final Shader defaultShader =
             new Shader("resources/shaders/static.vert",
                     "resources/shaders/static.frag")
@@ -24,6 +29,16 @@ public class Shader {
     public static final Shader unrollShadows =
             new Shader("resources/shaders/unrollShadows.vert",
                     "resources/shaders/unrollShadows.frag");
+
+    public static final Shader hblur =
+            new Shader("resources/shaders/blur/hblur.vert", "resources/shaders/blur/blur.frag")
+                    .bindFirstTexture()
+            ;
+
+    public static final Shader vblur =
+            new Shader("resources/shaders/blur/vblur.vert", "resources/shaders/blur/blur.frag")
+                    .bindFirstTexture()
+            ;
 
     private static Shader currentShader=null;
 
@@ -79,6 +94,10 @@ public class Shader {
     public void setUniform1f(int id, float value) {
         forceEnable();
         glUniform1f(id, value);
+    }
+    public void setUniform4f(int id, float x,float y, float z, float w) {
+        forceEnable();
+        glUniform4f(id, x,y,z,w);
     }
 
     public void setUniformMat4f(int id, Matrix4f matrix) {

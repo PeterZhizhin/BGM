@@ -19,6 +19,8 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 public class World {
     public static final String tempFolderPath = "temp/";
 
+    private static Background background;
+
     private static Matrix4f ortho;
 
     private static Note[][] notes;
@@ -71,6 +73,8 @@ public class World {
             }
             y -= 1f;
         }
+        //background = new Background((leftPlaceInLeft+5)/2,2,leftPlaceInLeft+5, 6, widthA, heightA);
+        background  = new Background((leftPlaceInLeft+5)/2,2,5-leftPlaceInLeft, 6, widthA, heightA);
     }
 
     public static void update(int deltaTime) {
@@ -147,8 +151,17 @@ public class World {
 
         bench.tick();
 
-        glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+        glClearColor(1, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        Shader.defaultShader.enable();
+        Camera.useCamera();
+        Shader.defaultShader.setUniformMat4f(Shader.defaultShader.modelMatrixUniformId,
+                background.getModel());
+        background.bind();
+        Square.draw();
+        background.unbind();
+
+        Shader.defaultShader.disable();
 
         Shader.defaultShader.enable();
         Camera.useCamera();
