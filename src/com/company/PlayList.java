@@ -1,7 +1,6 @@
 package com.company;
 
 import org.junit.Test;
-import org.lwjgl.Sys;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

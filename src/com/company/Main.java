@@ -56,7 +56,7 @@ public class Main {
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); // the window will be resizable
         glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 
         // Create the window
         if (IS_FULLSCREEN)
@@ -87,6 +87,9 @@ public class Main {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         glBlendEquation(GL14.GL_FUNC_ADD);
+
+
+        System.out.println("Supported OpenGL version: " + glGetString(GL_VERSION));
 
     }
 
