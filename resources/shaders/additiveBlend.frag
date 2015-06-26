@@ -9,8 +9,8 @@ in vec2 uvCoord;
 uniform sampler2D tex;
 uniform sampler2D tex2;
 
-uniform vec4 colorTex1;
-uniform vec4 colorTex2;
+in vec4 inColor1;
+in vec4 inColor2;
 
 vec3 sum(vec3 a, vec3 b) {
 	vec3 res=a+b;

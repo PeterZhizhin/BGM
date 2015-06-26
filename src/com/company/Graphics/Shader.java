@@ -13,7 +13,7 @@ public class Shader {
     private int ID;
 
     public static final Shader additiveBlend =
-            new Shader("resources/shaders/static.vert",
+            new Shader("resources/shaders/additiveBlend.vert",
                     "resources/shaders/additiveBlend.frag")
                     .bindFirstTexture().bindSecondTexture();
 
