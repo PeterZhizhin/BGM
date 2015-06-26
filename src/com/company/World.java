@@ -84,6 +84,9 @@ public class World {
         }
 
         if (currentPlayingNote!=null) {
+
+            currentPlayingNote.changeAngle((float) (deltaTime*2*Math.PI/1000));
+
             float[] fft = currentPlayingNote.getFFT();
             if (fft != null) {
                 for (int i = 0; i < barsSize; i++) {
@@ -171,8 +174,7 @@ public class World {
             BigSquare.draw();
             t.unbind();
 
-            float time= (float) (((System.currentTimeMillis()-playingStartTime)%1000)*2*Math.PI/1000f);
-            currentPlayingNote.draw(time);
+            currentPlayingNote.draw();
 
             Shader.defaultShader.disable();
 
