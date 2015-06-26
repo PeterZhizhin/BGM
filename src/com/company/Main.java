@@ -37,6 +37,7 @@ public class Main {
             glfwTerminate();
             errorCallback.release();
         }
+        System.exit(0);
     }
 
     private static void init() {
@@ -110,7 +111,7 @@ public class Main {
 
             Input.updateInput(window, windowWidth, windowHeight);
             long currentTime = System.currentTimeMillis();
-            update((int)(currentTime- previousUpdateTime));
+            update((int) (currentTime - previousUpdateTime));
             previousUpdateTime = currentTime;
             draw();
 

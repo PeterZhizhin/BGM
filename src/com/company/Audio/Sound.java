@@ -259,7 +259,7 @@ public class Sound {
 
     public static int num = 0;
 
-    public static String convert(String path) throws FileNotFoundException {
+    public static String convert(String path) throws EncoderException {
         File source = new File(path);
         String targetName = World.tempFolderPath+String.valueOf(num)+"tempWave.wav";
         ++num;
@@ -273,11 +273,7 @@ public class Sound {
         attributes.setAudioAttributes(audio);
 
         Encoder encoder = new Encoder();
-        try {
             encoder.encode(source, target, attributes);
-        } catch (EncoderException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
         return targetName;
     }
 

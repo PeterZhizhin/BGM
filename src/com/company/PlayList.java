@@ -1,6 +1,7 @@
 package com.company;
 
 import org.junit.Test;
+import org.lwjgl.Sys;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -14,38 +15,45 @@ import static junit.framework.TestCase.assertEquals;
 
 public class PlayList {
 
-    public PlayList() throws Exception {
+    public PlayList() {
 
-        tracks=new ArrayList[4];
-        for (int i=0; i<4; i++) {
-            tracks[i]=new ArrayList<>();
-        }
+        try {
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            tracks = new ArrayList[4];
+            for (int i = 0; i < 4; i++) {
+                tracks[i] = new ArrayList<>();
+            }
 
-        DocumentBuilder db = dbf.newDocumentBuilder();
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
-        Document dom = db.parse("test.xml");
+            DocumentBuilder db = dbf.newDocumentBuilder();
 
-        NodeList themes=dom.getElementsByTagName("group");
-        for (int i=0; i<themes.getLength(); i++) {
-            Element eElement = (Element) themes.item(i);
-            String name=eElement.getElementsByTagName("title").item(0).getTextContent();
-            int id= Integer.parseInt(eElement.getElementsByTagName("id").item(0).getTextContent());
-            groups[id]=name;
-        }
+            Document dom = db.parse("test.xml");
 
-        NodeList tracks=dom.getElementsByTagName("track");
-        for (int i=0; i<tracks.getLength(); i++) {
-            Element eElement = (Element) tracks.item(i);
-            String url=eElement.getElementsByTagName("url").item(0).getTextContent();
-            int themeId= Integer.parseInt(eElement.getElementsByTagName("groupid").item(0).getTextContent());
-            int price= Integer.parseInt(eElement.getElementsByTagName("price").item(0).getTextContent());
-            this.tracks[themeId].add(new Track(url, themeId, price));
-        }
+            NodeList themes = dom.getElementsByTagName("group");
+            for (int i = 0; i < themes.getLength(); i++) {
+                Element eElement = (Element) themes.item(i);
+                String name = eElement.getElementsByTagName("title").item(0).getTextContent();
+                int id = Integer.parseInt(eElement.getElementsByTagName("id").item(0).getTextContent());
+                groups[id] = name;
+            }
 
-        for (int i=0; i<4; i++) {
-            this.tracks[i].sort((o1, o2) -> Integer.compare(o1.getPrice(), o2.getPrice()));
+            NodeList tracks = dom.getElementsByTagName("track");
+            for (int i = 0; i < tracks.getLength(); i++) {
+                Element eElement = (Element) tracks.item(i);
+                String url = eElement.getElementsByTagName("url").item(0).getTextContent();
+                int themeId = Integer.parseInt(eElement.getElementsByTagName("groupid").item(0).getTextContent());
+                int price = Integer.parseInt(eElement.getElementsByTagName("price").item(0).getTextContent());
+                this.tracks[themeId].add(new Track(url, themeId, price));
+            }
+
+            for (int i = 0; i < 4; i++) {
+                this.tracks[i].sort((o1, o2) -> Integer.compare(o1.getPrice(), o2.getPrice()));
+            }
+        } catch (Exception e) {
+            System.err.println("SRS XML SHIT");
+            e.printStackTrace();
+            System.exit(1);
         }
 
     }

@@ -25,6 +25,7 @@ public class World {
     private static Note currentPlayingNote = null;
 
     private static FontRenderer fr=new FontRenderer(0.4f, 0.25f);
+    private static String[] groupNames = new String[4];
 
     private static long playingStartTime;
     private static void playNote(Note play) {
@@ -52,23 +53,23 @@ public class World {
         Camera.setProjectionMatrix(Matrix4f.orthographic(leftPlaceInLeft, 5, -1, 5, -1, 1));
         Camera.setViewMatrix(Matrix4f.IDENTITY);
         notes = new Note[4][4];
-        final int[][] values = new int[4][];
-        values[0] = new int[] {30, 50, 60, 30};
-        values[1] = new int[] {30, 70, 50, 60};
-        values[2] = new int[] {40, 50, 70, 40};
-        values[3] = new int[] {50, 60, 30, 50};
-        float x, y = 0.5f;
+        PlayList playList = new PlayList();
+        for (int i = 0; i < 4; i++) {
+            groupNames[i] = playList.getGroup(i);
+        }
+        float x =0.5f;
+        float y = 3.5f;
         for (int i = 0; i < 4; i++) {
             x = 0.5f;
             for (int j = 0; j < 4; j++) {
                 final int iF = i;
                 final int jF = j;
-                    notes[i][j] = new Note(Sound.AUDIO_PATH + String.valueOf(i + 1) + String.valueOf(j + 1) + ".mp3",
-                            values[i][j],
-                                () -> playNote(notes[iF][jF]), x, y);
+                Track currentTrack = playList.getTrack(i,j);
+                notes[i][j] = new Note(currentTrack.getUrl(),currentTrack.getPrice(),
+                        () -> playNote(notes[iF][jF]), x, y);
                 x += 1f;
             }
-            y += 1f;
+            y -= 1f;
         }
     }
 
@@ -181,12 +182,11 @@ public class World {
         Shader.defaultShader.enable();
             Camera.useCamera();
 
-
-
-            fr.render("РОЦК ", leftPlaceInLeft, 3.2f);
-            fr.render("КИНЦО", leftPlaceInLeft, 2.2f);
-            fr.render("АУТИЗМ", leftPlaceInLeft, 1.2f);
-            fr.render("SP33DC0RE", leftPlaceInLeft, 0.2f);
+            float y=3.2f;
+            for (String groupName : groupNames) {
+                fr.render(groupName, leftPlaceInLeft, y);
+                y -= 1;
+            }
         Shader.defaultShader.disable();
 
         bench.tack();

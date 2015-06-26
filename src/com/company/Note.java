@@ -7,6 +7,7 @@ import com.company.Graphics.AbstractTexture;
 import com.company.Graphics.Shader;
 import com.company.Graphics.Texture;
 import com.company.Math.Matrix4f;
+import it.sauronsoftware.jave.EncoderException;
 
 import java.io.FileNotFoundException;
 
@@ -41,11 +42,13 @@ public class Note extends Button {
         loadSound = new Thread(() -> {
                 try {
                     convertedPath = Sound.convert(soundPath);
-                } catch (FileNotFoundException e) {
-                    System.err.println("File "+soundPath+" not found!");
-                    e.printStackTrace();
                 }
-                System.out.println(soundPath+" loaded!");
+                 catch (EncoderException e) {
+                     System.err.println("File "+soundPath+" not found!");
+                     System.exit(1);
+                     e.printStackTrace();
+                }
+            System.out.println(soundPath+" loaded!");
             if (!Thread.interrupted())
                 loadedCallback();
 
