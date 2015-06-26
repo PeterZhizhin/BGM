@@ -24,7 +24,7 @@ public class World {
     private static Note[][] notes;
     private static Note currentPlayingNote = null;
 
-    private static FontRenderer fr=new FontRenderer(0.4f, 0.25f);
+    private static FontRenderer fr=new FontRenderer(0.3f, 0.2f);
     private static String[] groupNames = new String[4];
 
     private static long playingStartTime;
@@ -85,6 +85,8 @@ public class World {
         }
 
         if (currentPlayingNote!=null) {
+
+            //System.out.println(currentPlayingNote.getCurrentVolume());
 
             currentPlayingNote.changeAngle((float) (deltaTime*2*Math.PI/1000));
 
