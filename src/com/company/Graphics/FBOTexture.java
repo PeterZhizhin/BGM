@@ -95,4 +95,14 @@ public class FBOTexture extends AbstractTexture {
         glDeleteTextures(getTextureId());
         fboTextures.remove(this);
     }
+
+    @Override
+    public int getWidthInPX() {
+        return width;
+    }
+
+    @Override
+    public int getHateInPX() {
+        return height;
+    }
 }

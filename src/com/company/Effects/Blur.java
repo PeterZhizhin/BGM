@@ -9,11 +9,19 @@ import com.company.Square;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class Blur extends FBOTexture {
+public class Blur {
+    private static FBOTexture hblured = new FBOTexture(512,512);
+    private static FBOTexture blured = new FBOTexture(512,512);
 
-    private void blur(AbstractTexture texture, Shader blur) {
+    public static AbstractTexture getBlured(AbstractTexture texture) {
+        blur(hblured,texture,Shader.hblur);
+        blur(blured,hblured,Shader.vblur);
+        return blured;
+    }
+
+    private static void blur(FBOTexture textureToWrite, AbstractTexture texture, Shader blur) {
         Matrix4f projection = Matrix4f.orthographic(-0.5f,0.5f,0.5f,-0.5f,-1,1);
-        bindForWriting();
+        textureToWrite.bindForWriting();
         glClearColor(0,0,0,0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         blur.enable();
@@ -29,18 +37,6 @@ public class Blur extends FBOTexture {
         texture.unbind();
 
         blur.disable();
-        unbindForWriting();
-    }
-
-    private Blur(int sizeX, int sizeY, AbstractTexture texture, Shader blur) {
-        super(sizeX, sizeY);
-        blur(texture,blur);
-    }
-
-
-    public Blur(int width, int height, AbstractTexture texture) {
-        super(width, height);
-        AbstractTexture hblur = new Blur(width,height,texture,Shader.hblur);
-        blur(hblur,Shader.vblur);
+        textureToWrite.unbindForWriting();
     }
 }

@@ -99,6 +99,10 @@ public class Shader {
         forceEnable();
         glUniform4f(id, x,y,z,w);
     }
+    public void setUniform3f(int id, float x, float y, float z) {
+        forceEnable();
+        glUniform3f(id, x,y,z);
+    }
 
     public void setUniformMat4f(int id, Matrix4f matrix) {
         forceEnable();

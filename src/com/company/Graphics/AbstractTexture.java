@@ -56,4 +56,8 @@ public abstract class AbstractTexture {
 
     public abstract void dispose();
 
+    public abstract int getWidthInPX();
+
+    public abstract int getHateInPX();
+
 }

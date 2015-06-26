@@ -1,9 +1,11 @@
 package com.company;
 
 import com.company.Audio.Sound;
+import com.company.Effects.Glow;
 import com.company.GUI.FontRenderer;
 import com.company.Graphics.AbstractTexture;
 import com.company.Graphics.Camera;
+import com.company.Graphics.Texture;
 import com.company.Math.Matrix4f;
 import com.company.Graphics.Shader;
 import org.lwjgl.Sys;
@@ -19,7 +21,10 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 public class World {
     public static final String tempFolderPath = "temp/";
 
-    private static Background background;
+    //BACKGROUND START
+    private static BackgroundRenderer background;
+    //BACKGROUND END
+
 
     private static Matrix4f ortho;
 
@@ -73,8 +78,9 @@ public class World {
             }
             y -= 1f;
         }
-        //background = new Background((leftPlaceInLeft+5)/2,2,leftPlaceInLeft+5, 6, widthA, heightA);
-        background  = new Background((leftPlaceInLeft+5)/2,2,5-leftPlaceInLeft, 6, widthA, heightA);
+        background = new BackgroundRenderer(Matrix4f.translate((leftPlaceInLeft+5)/2,2,0).multiply(Matrix4f.scale(5-leftPlaceInLeft,6,1)),
+                   "lightmap.png","bluredlightmap.png");
+        //((leftPlaceInLeft+5)/2,2,5-leftPlaceInLeft, 6, widthA, heightA);
     }
 
     public static void update(int deltaTime) {
@@ -88,7 +94,15 @@ public class World {
             }
         }
 
+
+
         if (currentPlayingNote!=null) {
+
+
+            currentVolume=Math.max(
+                    0.5f+currentPlayingNote.getCurrentVolume()/2,
+                    currentVolume-deltaTime/1000f
+                    );
 
             //System.out.println(currentPlayingNote.getCurrentVolume());
 
@@ -117,6 +131,8 @@ public class World {
                 for (int j=0; j<arr.length; j++)
                     arr[j]=0;
             }
+        }             else {
+            currentVolume=0.5f;
         }
 
 
@@ -147,25 +163,20 @@ public class World {
 
     private static Benchmark bench=new Benchmark("World.draw", true);
 
+    private static float currentVolume;
+
     public static void draw() {
 
         bench.tick();
 
-        glClearColor(0.9f, 0.9f, 0.9f, 1);
+        glClearColor(0.2f,0.2f,0.2f, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Shader.defaultShader.enable();
-        Camera.useCamera();
-        Shader.defaultShader.setUniformMat4f(Shader.defaultShader.modelMatrixUniformId,
-                background.getModel());
-        background.bind();
-        Square.draw();
-        background.unbind();
 
-        Shader.defaultShader.disable();
+
+
+        background.render(currentVolume,currentVolume*2,0);
 
         Shader.defaultShader.enable();
-        Camera.useCamera();
-
         for(Note[] n1 : notes)
             for(Note note : n1)
             if (note!=currentPlayingNote)
