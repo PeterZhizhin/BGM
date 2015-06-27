@@ -13,7 +13,7 @@ public class Glow {
 
     public static AbstractTexture getGlowed(AbstractTexture source, float r, float g, float b) {
         Matrix4f projection = Matrix4f.orthographic(-0.5f,0.5f,0.5f,-0.5f,-1,1);
-        AbstractTexture blured = Blur.getBlured(source);
+        AbstractTexture blured = Blur.getBlured(new FBOTexture(Blur.getBlured(source)));
         texture.bindForWriting();
         checkForGLError();
         glClearColor(0,0,0,0);
