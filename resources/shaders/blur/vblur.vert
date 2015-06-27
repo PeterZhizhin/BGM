@@ -7,7 +7,7 @@ uniform mat4 pr_matrix;
 uniform mat4 vw_matrix;
 uniform mat4 ml_matrix;
 
-#define itemsNumber 16
+#define itemsNumber 8
 
 out DATA
 {

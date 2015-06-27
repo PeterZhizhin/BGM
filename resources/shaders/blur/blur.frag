@@ -2,7 +2,7 @@
 
 layout (location = 0) out vec4 color;
 
-#define itemsNumber 16
+#define itemsNumber 8
 
 in DATA
 {
