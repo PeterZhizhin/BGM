@@ -1,14 +1,13 @@
 package com.company.Graphics;
 
+import com.company.SomethingThatUsesNativeResources;
 import org.lwjgl.opengl.GL13;
 
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 
-public abstract class AbstractTexture {
-    public static final String TEXTURE_PATH = "resources/textures/";
-
+public abstract class AbstractTexture extends SomethingThatUsesNativeResources {
     private static int[] lastBindedId={0, 0};
 
     public int getTextureId() {
@@ -53,8 +52,6 @@ public abstract class AbstractTexture {
         glBindTexture(GL_TEXTURE_2D, 0);
         lastBindedId[0]=0;
     }
-
-    public abstract void dispose();
 
     public abstract int getWidthInPX();
 

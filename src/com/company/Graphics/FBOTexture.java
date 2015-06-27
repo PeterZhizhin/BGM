@@ -90,7 +90,7 @@ public class FBOTexture extends AbstractTexture {
         }
     }
 
-    public void dispose() {
+    protected void dispose() {
         glDeleteFramebuffers(fboId);
         glDeleteTextures(getTextureId());
         fboTextures.remove(this);

@@ -5,6 +5,7 @@ import static org.lwjgl.openal.AL11.AL_SEC_OFFSET;
 import static org.lwjgl.openal.AL11.alGetBufferi;
 import static org.lwjgl.openal.Util.checkALError;
 
+import com.company.SomethingThatUsesNativeResources;
 import com.company.World;
 import it.sauronsoftware.jave.*;
 import org.lwjgl.LWJGLUtil;
@@ -16,7 +17,7 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class Sound {
+public class Sound extends SomethingThatUsesNativeResources {
     private int soundSource;
     private int soundBuffer;
 
@@ -111,7 +112,7 @@ public class Sound {
      * Очистка нативной памяти
      * Clearing of native memory
      */
-    public void dispose()
+    protected void dispose()
     {
         checkALError();
         alDeleteSources(soundSource);

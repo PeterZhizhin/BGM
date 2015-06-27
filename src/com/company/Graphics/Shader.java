@@ -1,11 +1,12 @@
 package com.company.Graphics;
 
 import com.company.Math.Matrix4f;
+import com.company.SomethingThatUsesNativeResources;
 import com.company.Utils.ShaderUtils;
 import static com.company.Utils.Utils.checkForGLError;
 import static org.lwjgl.opengl.GL20.*;
 
-public class Shader {
+public class Shader extends SomethingThatUsesNativeResources {
 
     public static final int VERTEX_ATTRIB = 0;
     public static final int UV_COORDS = 1;
@@ -126,4 +127,8 @@ public class Shader {
         currentShader=null;
     }
 
+    @Override
+    protected void dispose() {
+        //TODO
+    }
 }

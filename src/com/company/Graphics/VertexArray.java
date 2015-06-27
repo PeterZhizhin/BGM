@@ -1,6 +1,7 @@
 package com.company.Graphics;
 
 
+import com.company.SomethingThatUsesNativeResources;
 import com.company.Utils.Buffers;
 
 
@@ -11,7 +12,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-public class VertexArray {
+public class VertexArray extends SomethingThatUsesNativeResources {
 	
 	private int VAO, VBO, IBO, TCBO;
 	
@@ -63,7 +64,10 @@ public class VertexArray {
 		draw();
 		unbind();
 	}
-	
-	
-	
+
+
+	@Override
+	protected void dispose() {
+		//TODO
+	}
 }
