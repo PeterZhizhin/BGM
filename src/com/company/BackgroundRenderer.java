@@ -7,6 +7,8 @@ import com.company.Graphics.Shader;
 import com.company.Graphics.Texture;
 import com.company.Math.Matrix4f;
 
+import static com.company.Utils.Utils.checkForGLError;
+
 public class BackgroundRenderer {
     private AbstractTexture texture;
     private AbstractTexture bluredTexture;
@@ -21,7 +23,8 @@ public class BackgroundRenderer {
 
 
     public void render(float r, float g, float b) {
-        AbstractTexture glowed = Glow.getGlowed(texture,bluredTexture,r,g,b);
+        AbstractTexture glowed = Glow.getGlowed(texture,r,g,b);
+        checkForGLError();
         Shader.defaultShader.enable();
         Camera.useCamera();
         glowed.bind();

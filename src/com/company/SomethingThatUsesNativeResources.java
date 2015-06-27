@@ -2,6 +2,12 @@ package com.company;
 
 public abstract class SomethingThatUsesNativeResources {
 
+    private StackTraceElement[] constructorStackTrace;
+
+    public SomethingThatUsesNativeResources() {
+        constructorStackTrace=Thread.currentThread().getStackTrace();
+    }
+
     private boolean resourcesReleased=false;
 
     public void releaseResources() {
@@ -14,18 +20,29 @@ public abstract class SomethingThatUsesNativeResources {
         }
     }
 
-    public void finalize() {
+    /*public void finalize() {
         try {
             super.finalize();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
         if (!resourcesReleased) {
+
+            System.err.println("Not-cleaned object stat:\n" +
+                "   type: "+this.getClass()+"\n" +
+                "   objectid: "+this+"\n" +
+                "   hash: "+this.hashCode()
+            );
+            Exception e=new Exception("Creation stacktrace:");
+            e.setStackTrace(constructorStackTrace);
+            e.printStackTrace();
+
             new Exception("Object was garbage-collected, but resources are nor released!").printStackTrace();
+
             releaseResources();
             System.exit(1);
         }
-    }
+    }*/
 
     protected abstract void dispose();
 

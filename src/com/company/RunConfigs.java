@@ -23,7 +23,7 @@ public class RunConfigs {
 
             Document dom = db.parse("configs.xml");
 
-            NodeList themes = dom.getElementsByTagName("fullscreen");
+            NodeList themes = dom.getElementsByTagName("guessmelody");
             for (int i = 0; i < themes.getLength(); i++) {
                 Element eElement = (Element) themes.item(i);
                 String fullscreen = eElement.getElementsByTagName("fullscreen").item(0).getTextContent();

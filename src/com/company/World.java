@@ -50,14 +50,49 @@ public class World {
     }
     private static int height;
     private static int width;
-    private static float leftPlaceInLeft;
+    private static float leftPlaceInLeft = 5 - 6.0f * 4 / 3;
+
+    public static float[] translateScreenToWorld(int x, int y) {
+
+        float[] res=new float[2];
+
+        if ((float)width/height>=4/3f) {
+            float dx=(6.0f*width/height-8)/2;
+
+            float worldWidth=(5 + dx)-(leftPlaceInLeft - dx);
+
+            res[0]=worldWidth*x/width+(leftPlaceInLeft - dx);
+            res[1]=4-(6f*y/height-1);
+        } else {
+            float dy=(8.0f*height/width-6)/2;
+
+            float worldHeight=(5+dy)-(-1-dy);
+            float worldWidth=5-leftPlaceInLeft;
+
+            res[0]=worldWidth*x/width+leftPlaceInLeft;
+            res[1]=worldHeight-(worldHeight*y/height) +(-1-dy);
+        }
+
+        return res;
+    }
+
+    public static void resize(int widthN, int heightN) {
+        width = widthN; height = heightN;
+        if ((float)widthN/heightN>=4/3f) {
+            float dx=(6.0f*widthN/heightN-8)/2;
+            Camera.setProjectionMatrix(Matrix4f.orthographic(leftPlaceInLeft - dx, 5 + dx, -1, 5, -1, 1));
+        } else {
+            float dy=(8.0f*heightN/widthN-6)/2;
+            Camera.setProjectionMatrix(Matrix4f.orthographic(leftPlaceInLeft, 5, -1-dy, 5+dy, -1, 1));
+        }
+
+    }
 
     public static void init(int widthA,int heightA) {
         width = widthA;
         height = heightA;
         glViewport(0, 0, width, height);
-        leftPlaceInLeft = 5 - 6.0f * width / height;
-        Camera.setProjectionMatrix(Matrix4f.orthographic(leftPlaceInLeft, 5, -1, 5, -1, 1));
+        resize(widthA, heightA);
         Camera.setViewMatrix(Matrix4f.IDENTITY);
         notes = new Note[4][4];
         PlayList playList = new PlayList();
@@ -100,7 +135,7 @@ public class World {
 
 
             currentVolume=Math.max(
-                    0.5f+currentPlayingNote.getCurrentVolume()/2,
+                    0.2f+currentPlayingNote.getCurrentVolume()*0.8f,
                     currentVolume-deltaTime/1000f
                     );
 
@@ -132,7 +167,7 @@ public class World {
                     arr[j]=0;
             }
         }             else {
-            currentVolume=0.5f;
+            currentVolume=0.2f;
         }
 
 
@@ -169,12 +204,14 @@ public class World {
 
         bench.tick();
 
-        glClearColor(0.2f,0.2f,0.2f, 1);
+        glClearColor(0f,0f,0f, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        checkForGLError();
 
 
 
-        background.render(currentVolume,currentVolume*2,0);
+        background.render(currentVolume,currentVolume,currentVolume*4);
+        checkForGLError();
 
         Shader.defaultShader.enable();
         for(Note[] n1 : notes)

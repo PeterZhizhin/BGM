@@ -5,6 +5,7 @@ import com.company.Graphics.Shader;
 import com.company.Graphics.Texture;
 import com.company.Graphics.VertexArray;
 import com.company.Math.Matrix4f;
+import com.company.SomethingThatUsesNativeResources;
 
 public class FontRenderer {
 

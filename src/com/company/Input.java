@@ -1,13 +1,15 @@
 package com.company;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.Sys;
 import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWWindowSizeCallback;
 
 import java.nio.DoubleBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class Input extends GLFWKeyCallback {
+public class Input {
     public static boolean[] keys = new boolean[65535];
     public static boolean[] pKeys = new boolean[65535];
 
@@ -32,14 +34,19 @@ public class Input extends GLFWKeyCallback {
     }
 
 
-    @Override
-    public void invoke(long window, int key, int scancode, int action, int mods) {
+    public static void keyPressed(long window, int key, int scancode, int action, int mods) {
         if (key>=0 && key<65535) {
             keys[key] = action != GLFW_RELEASE;
             if (action == GLFW_RELEASE) {
                 pKeys[key] = true;
             }
         }
+    }
+
+    public static void resized(long window, int width, int height) {
+        System.out.println("Resized "+width+" "+height);
+        World.resize(width,height);
+
     }
 
     public static boolean isKeyDown(int keycode) {
@@ -53,10 +60,11 @@ public class Input extends GLFWKeyCallback {
     private static DoubleBuffer mouseXBuffer=BufferUtils.createDoubleBuffer(1),
             mouseYBuffer=BufferUtils.createDoubleBuffer(1);
 
-    public static void updateInput(long window, float w, float h) {
+    public static void updateInput(long window) {
         glfwGetCursorPos(window,mouseXBuffer,mouseYBuffer);
-        mouseX = mouseXBuffer.get(0)*6/h+5-6*w/h;
-        mouseY = 4-(mouseYBuffer.get(0)*6/h-1);//documented feature of glfw - inverted Y axis of mouse
+        float[] coords = World.translateScreenToWorld((int)mouseXBuffer.get(0),(int)mouseYBuffer.get(0));
+        mouseX = coords[0];
+        mouseY = coords[1];
 
         isMousePressed=1==glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_1);
         wasMousePressed = prevMouseState & !isMousePressed;

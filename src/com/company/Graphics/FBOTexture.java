@@ -75,6 +75,7 @@ public class FBOTexture extends AbstractTexture {
             new Exception("FBO already binded!").printStackTrace();
         } else {
             glBindFramebuffer(GL_FRAMEBUFFER, fboId);
+            checkForGLError();
             glViewport(0, 0, width, height);
             bindedFBO = fboId;
         }

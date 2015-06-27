@@ -46,9 +46,9 @@ public class PlayList {
                 this.tracks[themeId].add(new Track(url, themeId, price));
             }
 
-            for (int i = 0; i < 4; i++) {
+            /*for (int i = 0; i < 4; i++) {
                 this.tracks[i].sort((o1, o2) -> Integer.compare(o1.getPrice(), o2.getPrice()));
-            }
+            }*/
         } catch (Exception e) {
             System.err.println("SRS XML SHIT");
             e.printStackTrace();

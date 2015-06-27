@@ -3,6 +3,9 @@ package com.company.Graphics;
 import com.company.Math.Matrix4f;
 import com.company.SomethingThatUsesNativeResources;
 import com.company.Utils.ShaderUtils;
+
+import java.nio.FloatBuffer;
+
 import static com.company.Utils.Utils.checkForGLError;
 import static org.lwjgl.opengl.GL20.*;
 
@@ -30,14 +33,20 @@ public class Shader extends SomethingThatUsesNativeResources {
     public static final Shader unrollShadows =
             new Shader("resources/shaders/unrollShadows.vert",
                     "resources/shaders/unrollShadows.frag");
-
-    public static final Shader hblur =
-            new Shader("resources/shaders/blur/hblur.vert", "resources/shaders/blur/blur.frag")
+/*
+    public static final Shader blur =
+            new Shader("resources/shaders/static.vert", "resources/shaders/blur.frag")
                     .bindFirstTexture()
-            ;
+            ;*/
 
     public static final Shader vblur =
             new Shader("resources/shaders/blur/vblur.vert", "resources/shaders/blur/blur.frag")
+                    .bindFirstTexture()
+            ;
+
+
+    public static final Shader hblur =
+            new Shader("resources/shaders/blur/hblur.vert", "resources/shaders/blur/blur.frag")
                     .bindFirstTexture()
             ;
 
@@ -96,10 +105,22 @@ public class Shader extends SomethingThatUsesNativeResources {
         forceEnable();
         glUniform1f(id, value);
     }
+    public void setUniform1fv(int id, FloatBuffer values) {
+        forceEnable();
+        glUniform1fv(id, values);
+    }
     public void setUniform4f(int id, float x,float y, float z, float w) {
         forceEnable();
         glUniform4f(id, x,y,z,w);
     }
+
+
+    public void setUniform2f(int id, float x, float y) {
+        forceEnable();
+        glUniform2f(id, x,y);
+    }
+
+
     public void setUniform3f(int id, float x, float y, float z) {
         forceEnable();
         glUniform3f(id, x,y,z);
@@ -131,4 +152,5 @@ public class Shader extends SomethingThatUsesNativeResources {
     protected void dispose() {
         //TODO
     }
+
 }

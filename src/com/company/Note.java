@@ -161,7 +161,7 @@ public class Note extends Button {
             loadSound.interrupt();
         else {
             sound.stopSound();
-            sound.dispose();
+            sound.releaseResources();
             sound = null;
         }
     }
@@ -281,6 +281,6 @@ public class Note extends Button {
 
     public void destroy() {
         if (sound!=null)
-            sound.dispose();
+            sound.releaseResources();
     }
 }

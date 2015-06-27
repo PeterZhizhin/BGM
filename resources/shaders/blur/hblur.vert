@@ -7,19 +7,25 @@ uniform mat4 pr_matrix;
 uniform mat4 vw_matrix;
 uniform mat4 ml_matrix;
 
+#define itemsNumber 54
+
 out DATA
 {
 	vec2 tc;
-	vec2 v_blurTexCoords[14];
+	vec2 v_blurTexCoords[itemsNumber];
 } vs_out;
 
 void main()
 {
 	gl_Position = pr_matrix * vw_matrix * ml_matrix * position;
 
-	for(int i=0; i<14; i++) {
-	    vs_out.v_blurTexCoords[i] = tc+vec2((i-14)/100,0);
-	}
+    for (int i=0; i<itemsNumber/2; i++) {
+        vs_out.v_blurTexCoords[i] = tc + vec2(-(itemsNumber/2-i)*0.002, 0.0);
+    }
+
+    for (int i=0; i<itemsNumber/2; i++) {
+        vs_out.v_blurTexCoords[i+itemsNumber/2] = tc + vec2((i+1)*0.002, 0.0);
+    }
 
 	vs_out.tc = tc;
 }

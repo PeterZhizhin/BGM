@@ -5,6 +5,7 @@ import org.lwjgl.Sys;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 
+import static com.company.Utils.Utils.checkForGLError;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -16,7 +17,21 @@ public class Main {
 
     // We need to strongly reference callback instances.
     private static GLFWErrorCallback errorCallback;
-    private static Input keyCallback = new Input();
+    private static GLFWKeyCallback keyCallback = new GLFWKeyCallback() {
+        @Override
+        public void invoke(long l, int i, int i1, int i2, int i3) {
+            Input.keyPressed(l, i, i1, i2, i3);
+        }
+    };
+
+    private static GLFWFramebufferSizeCallback resizeCallback = new GLFWFramebufferSizeCallback() {
+        @Override
+        public void invoke(long window, int width, int height) {
+            Input.resized(window,width,height);
+            windowHeight = height;
+            windowWidth  = width;
+        }
+    };
 
     // The window handle
     private static long window;
@@ -31,15 +46,22 @@ public class Main {
             // Release window and window callbacks
             glfwDestroyWindow(window);
             keyCallback.release();
+            resizeCallback.release();
         } finally {
             // Terminate GLFW and release the GLFWerrorfun
             OpenALContextHandler.destroy();
             glfwTerminate();
             errorCallback.release();
         }
+        System.gc();
         System.exit(0);
     }
 
+    private static boolean isFullscreen;
+    private static void setCallbacks() {
+        glfwSetKeyCallback(window, keyCallback);
+        glfwSetFramebufferSizeCallback(window,resizeCallback);
+    }
     private static void init() {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
@@ -48,18 +70,20 @@ public class Main {
         // Initialize GLFW. Most GLFW functions will not work before doing this.
         if ( glfwInit() != GL11.GL_TRUE )
             throw new IllegalStateException("Unable to initialize GLFW");
+        System.out.println(glfwGetVersionString());
 
         OpenALContextHandler.create();
 
         // Configure our window
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
-        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); // the window will be resizable
+        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
         glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 
         // Create the window
-        if (IS_FULLSCREEN)
+        isFullscreen = new RunConfigs().getIsFullScreen();
+        if (isFullscreen)
         {
             ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
             windowWidth = GLFWvidmode.width(vidmode);
@@ -76,7 +100,7 @@ public class Main {
             throw new RuntimeException("Failed to create the GLFW window");
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, keyCallback);
+        setCallbacks();
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
@@ -112,7 +136,7 @@ public class Main {
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            Input.updateInput(window, windowWidth, windowHeight);
+            Input.updateInput(window);
             long currentTime = System.currentTimeMillis();
             update((int) (currentTime - previousUpdateTime));
             previousUpdateTime = currentTime;
@@ -129,7 +153,6 @@ public class Main {
 
     }
 
-    private static final boolean IS_FULLSCREEN = false;
     private static final int DESIRED_WIDTH = 1024;
     private static final int DESIRED_HEIGHT = 768;
     private static int windowWidth,windowHeight;
