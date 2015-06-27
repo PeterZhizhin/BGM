@@ -14,8 +14,8 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Blur {
 
-    private static FBOTexture hblur = new FBOTexture(1024,1024);
-    private static FBOTexture vblur = new FBOTexture(1024,1024);
+    private static FBOTexture hblur = new FBOTexture(512,512);
+    private static FBOTexture vblur = new FBOTexture(512,512);
 
     public static AbstractTexture getBlured(AbstractTexture texture) { hblur.bindForWriting();
 
