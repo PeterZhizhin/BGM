@@ -1,6 +1,8 @@
 package com.company.Graphics;
 
 
+import com.company.Math.Matrix4f;
+import com.company.Square;
 import com.company.World;
 
 import java.nio.ByteBuffer;
@@ -50,8 +52,6 @@ public class FBOTexture extends AbstractTexture {
 
     public FBOTexture(int width, int height) {
         super(createTexture(width, height));
-        this.width = width;
-        this.height = height;
 
         fboId=glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fboId);
@@ -66,6 +66,33 @@ public class FBOTexture extends AbstractTexture {
 
         System.out.println("Created FBO texture "+width+"x"+height+", id: "+fboId);
         fboTextures.add(this);
+    }
+
+    public FBOTexture(AbstractTexture texture) {
+        this(texture.getWidthInPX(),texture.getHateInPX());
+
+        Matrix4f projection = Matrix4f.orthographic(-0.5f,0.5f,0.5f,-0.5f,-1,1);
+        bindForWriting();
+
+        glClearColor(0,0,0,0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        Shader.defaultShader.enable();
+
+        Camera.useViewCamera();
+        Camera.useProjectionCamera(projection);
+        Shader.defaultShader.setUniformMat4f(
+                Shader.getCurrentShader().modelMatrixUniformId,
+                Matrix4f.IDENTITY);
+        texture.bind();
+        Square.draw();
+        texture.unbind();
+
+
+
+        Shader.defaultShader.disable();
+
+        unbindForWriting();
     }
 
     private static int bindedFBO=0;
