@@ -11,9 +11,8 @@ public class Glow {
     private static final int color = Shader.additiveBlend.getUniform("colorTex");
     private static final FBOTexture texture = new FBOTexture(1024,1024);
 
-    public static AbstractTexture getGlowed(AbstractTexture source, float r, float g, float b) {
+    public static AbstractTexture getGlowed(AbstractTexture source, AbstractTexture blured, float r, float g, float b) {
         Matrix4f projection = Matrix4f.orthographic(-0.5f,0.5f,0.5f,-0.5f,-1,1);
-        AbstractTexture blured = Blur.getBlured(new FBOTexture(Blur.getBlured(source)));
         texture.bindForWriting();
         checkForGLError();
         glClearColor(0,0,0,0);

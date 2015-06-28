@@ -114,7 +114,7 @@ public class World {
             y -= 1f;
         }
         background = new BackgroundRenderer(Matrix4f.translate((leftPlaceInLeft+5)/2,2,0).multiply(Matrix4f.scale(5-leftPlaceInLeft,6,1)),
-                   "lightmap.png","bluredlightmap.png");
+                   "lightmap.png","bluredlightmap.png",groupNames);
         //((leftPlaceInLeft+5)/2,2,5-leftPlaceInLeft, 6, widthA, heightA);
     }
 
@@ -210,7 +210,8 @@ public class World {
 
 
 
-        background.render(currentVolume,currentVolume,currentVolume*4);
+        background.render(currentVolume, currentVolume, currentVolume * 4,
+                currentVolume,currentVolume,currentVolume*4);
         checkForGLError();
 
         Shader.defaultShader.enable();
